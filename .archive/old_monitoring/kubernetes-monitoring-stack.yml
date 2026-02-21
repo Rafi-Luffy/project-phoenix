@@ -1,0 +1,540 @@
+# Kubernetes Monitoring Stack Deployment
+# Includes: Prometheus, Alertmanager, Grafana, Loki, Jaeger
+# Version: 1.0.0
+# Updated: December 28, 2025
+
+---
+# Monitoring namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    name: monitoring
+    monitoring: "true"
+
+---
+# Prometheus ServiceMonitor for API
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: phoenix-api
+  namespace: phoenix
+  labels:
+    app: phoenix-api
+spec:
+  selector:
+    matchLabels:
+      app: phoenix-api
+  endpoints:
+    - port: metrics
+      interval: 15s
+      path: /metrics
+      scheme: http
+      relabelings:
+        - source_labels: [__meta_kubernetes_pod_name]
+          target_label: pod
+        - source_labels: [__meta_kubernetes_namespace]
+          target_label: namespace
+
+---
+# Prometheus ServiceMonitor for PostgreSQL
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgres-exporter
+  namespace: phoenix
+  labels:
+    app: postgres-exporter
+spec:
+  selector:
+    matchLabels:
+      app: postgres-exporter
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics
+      scheme: http
+
+---
+# Prometheus ServiceMonitor for Redis
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: redis-exporter
+  namespace: phoenix
+  labels:
+    app: redis-exporter
+spec:
+  selector:
+    matchLabels:
+      app: redis-exporter
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics
+      scheme: http
+
+---
+# PrometheusRule for AlertManager
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: phoenix-alerts
+  namespace: phoenix
+  labels:
+    prometheus: kube-prometheus
+spec:
+  groups:
+    - name: phoenix.rules
+      interval: 30s
+      rules:
+        # API Response Time Alert
+        - alert: HighAPIResponseTime
+          expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{endpoint=~"/api/.*"}[5m])) > 1.0
+          for: 5m
+          labels:
+            severity: warning
+            service: phoenix-api
+          annotations:
+            summary: "High API response time detected"
+            description: "95th percentile response time is {{ $value }}s"
+            dashboard: "http://grafana.monitoring:3000/d/api-performance"
+
+        # Database Connection Pool Alert
+        - alert: DatabaseConnectionPoolNearingExhaustion
+          expr: (sqlalchemy_pool_checkedin + sqlalchemy_pool_checkedout) / sqlalchemy_pool_size > 0.8
+          for: 3m
+          labels:
+            severity: warning
+            service: phoenix-api
+          annotations:
+            summary: "Database connection pool usage high"
+            description: "Connection pool is {{ $value | humanizePercentage }} full"
+
+---
+# Prometheus Configuration
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: phoenix
+  namespace: monitoring
+  labels:
+    app: prometheus
+spec:
+  replicas: 2
+  retention: 15d
+  retentionSize: "10GB"
+  
+  # Service account
+  serviceAccountName: prometheus
+  
+  # Selector for ServiceMonitors
+  serviceMonitorSelector:
+    matchLabels: {}
+  serviceMonitorNamespaceSelector:
+    matchLabels: {}
+  
+  # Selector for PrometheusRules
+  ruleSelector:
+    matchLabels: {}
+  ruleNamespaceSelector:
+    matchLabels: {}
+  
+  # Alertmanager configuration
+  alerting:
+    alertmanagers:
+      - name: alertmanager
+        namespace: monitoring
+        port: web
+  
+  # Storage
+  storage:
+    volumeClaimTemplate:
+      metadata:
+        name: prometheus-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Gi
+  
+  # Resources
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  
+  # Pod security
+  podSecurityPolicy: restricted
+  
+  # Tolerations for scheduling
+  tolerations:
+    - key: "monitoring"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  
+  # Affinity
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - prometheus
+            topologyKey: kubernetes.io/hostname
+
+---
+# Alertmanager Configuration
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: phoenix
+  namespace: monitoring
+  labels:
+    app: alertmanager
+spec:
+  replicas: 3
+  
+  # Service account
+  serviceAccountName: alertmanager
+  
+  # Storage
+  storage:
+    volumeClaimTemplate:
+      metadata:
+        name: alertmanager-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+  
+  # Resources
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  # Pod security
+  podSecurityPolicy: restricted
+  
+  # Affinity
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - alertmanager
+            topologyKey: kubernetes.io/hostname
+
+---
+# ServiceMonitor for Prometheus
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: prometheus
+  endpoints:
+    - port: web
+      interval: 30s
+
+---
+# ServiceMonitor for Alertmanager
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: alertmanager
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: alertmanager
+  endpoints:
+    - port: web
+      interval: 30s
+
+---
+# Loki StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: loki
+  namespace: monitoring
+  labels:
+    app: loki
+spec:
+  serviceName: loki
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+  template:
+    metadata:
+      labels:
+        app: loki
+    spec:
+      serviceAccountName: loki
+      securityContext:
+        fsGroup: 10001
+      containers:
+        - name: loki
+          image: grafana/loki:2.9.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3100
+              protocol: TCP
+            - name: grpc
+              containerPort: 9096
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/loki
+            - name: storage
+              mountPath: /loki
+          livenessProbe:
+            httpGet:
+              path: /loki/api/v1/status/buildinfo
+              port: http
+            initialDelaySeconds: 45
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /loki/api/v1/status/buildinfo
+              port: http
+            initialDelaySeconds: 45
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+      volumes:
+        - name: config
+          configMap:
+            name: loki-config
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi
+
+---
+# Loki Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+  namespace: monitoring
+  labels:
+    app: loki
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 3100
+      targetPort: http
+    - name: grpc
+      port: 9096
+      targetPort: grpc
+  selector:
+    app: loki
+
+---
+# Jaeger StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jaeger
+  namespace: monitoring
+  labels:
+    app: jaeger
+spec:
+  serviceName: jaeger
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      serviceAccountName: jaeger
+      containers:
+        - name: jaeger
+          image: jaegertracing/all-in-one:latest
+          ports:
+            - name: jaeger-agent-zipkin-thrift
+              containerPort: 5775
+              protocol: UDP
+            - name: jaeger-agent-compact
+              containerPort: 6831
+              protocol: UDP
+            - name: jaeger-agent-binary
+              containerPort: 6832
+              protocol: UDP
+            - name: jaeger-agent-serve-configs
+              containerPort: 5778
+              protocol: TCP
+            - name: jaeger-collector
+              containerPort: 14250
+              protocol: TCP
+            - name: jaeger-collector-otlp
+              containerPort: 4317
+              protocol: TCP
+            - name: jaeger-query
+              containerPort: 16686
+              protocol: TCP
+          env:
+            - name: COLLECTOR_OTLP_ENABLED
+              value: "true"
+          volumeMounts:
+            - name: storage
+              mountPath: /badger
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+
+---
+# Jaeger Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+  namespace: monitoring
+  labels:
+    app: jaeger
+spec:
+  type: ClusterIP
+  ports:
+    - name: jaeger-agent-zipkin-thrift
+      port: 5775
+      targetPort: 5775
+      protocol: UDP
+    - name: jaeger-agent-compact
+      port: 6831
+      targetPort: 6831
+      protocol: UDP
+    - name: jaeger-agent-binary
+      port: 6832
+      targetPort: 6832
+      protocol: UDP
+    - name: jaeger-agent-serve-configs
+      port: 5778
+      targetPort: 5778
+    - name: jaeger-collector
+      port: 14250
+      targetPort: 14250
+    - name: jaeger-collector-otlp
+      port: 4317
+      targetPort: 4317
+    - name: jaeger-query
+      port: 16686
+      targetPort: 16686
+  selector:
+    app: jaeger
+
+---
+# RBAC: ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitoring
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alertmanager
+  namespace: monitoring
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: loki
+  namespace: monitoring
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger
+  namespace: monitoring
+
+---
+# RBAC: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/proxy
+      - services
+      - endpoints
+      - pods
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+
+---
+# RBAC: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+    namespace: monitoring

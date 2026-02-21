@@ -1,0 +1,188 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: phoenix_postgres
+    environment:
+      POSTGRES_DB: project_phoenix
+      POSTGRES_USER: phoenix_user
+      POSTGRES_PASSWORD: phoenix_secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U phoenix_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: phoenix_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB Document Store
+  mongodb:
+    image: mongo:7
+    container_name: phoenix_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: phoenix_user
+      MONGO_INITDB_ROOT_PASSWORD: phoenix_secure_password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: phoenix_backend
+    environment:
+      DATABASE_URL: postgresql://phoenix_user:phoenix_secure_password@postgres:5432/project_phoenix
+      REDIS_URL: redis://redis:6379/0
+      MONGODB_URL: mongodb://phoenix_user:phoenix_secure_password@mongodb:27017/project_phoenix
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: mistral
+      ENABLE_LLM: "true"
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    volumes:
+      - ./autonomous_system:/app/autonomous_system
+      - ./main.py:/app/main.py
+      - ./config.py:/app/config.py
+      - ./requirements.txt:/app/requirements.txt
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Ollama LLM Server - FREE, Open Source, Zero Cost
+  ollama:
+    image: ollama/ollama:latest
+    container_name: phoenix_ollama
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Pull default model at startup
+    # For production, remove this and pull models manually or use init script
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      ollama serve &
+      sleep 10 &&
+      ollama pull mistral &&
+      wait
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+    # Ollama needs proper resource allocation for LLM
+    # Adjust based on your system:
+    # - 4GB RAM minimum for 7B model
+    # - 8GB+ recommended
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: phoenix_prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: phoenix_grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # Jaeger Tracing (Optional, for distributed tracing)
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: phoenix_jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "6831:6831/udp" # Jaeger collector
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  ollama_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  default:
+    name: phoenix_network
+    driver: bridge

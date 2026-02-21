@@ -1,0 +1,287 @@
+# Prometheus Alerting Rules
+# Defines alerts for application and infrastructure monitoring
+# Version: 1.0.0
+# Updated: December 28, 2025
+
+groups:
+  # Application Alerts
+  - name: application_alerts
+    interval: 30s
+    rules:
+      # API Response Time
+      - alert: HighAPIResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{endpoint=~"/api/.*"}[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          service: phoenix-api
+        annotations:
+          summary: "High API response time detected"
+          description: "95th percentile response time is {{ $value }}s for endpoint {{ $labels.endpoint }}"
+          dashboard: "http://grafana:3000/d/api-performance"
+          runbook: "https://runbooks.example.com/high-api-response"
+
+      # API Error Rate
+      - alert: HighAPIErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: phoenix-api
+        annotations:
+          summary: "High API error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for endpoint {{ $labels.endpoint }}"
+          dashboard: "http://grafana:3000/d/api-errors"
+          runbook: "https://runbooks.example.com/api-errors"
+
+      # Database Connection Pool Exhaustion
+      - alert: DatabaseConnectionPoolNearingExhaustion
+        expr: |
+          (sqlalchemy_pool_checkedin + sqlalchemy_pool_checkedout) / sqlalchemy_pool_size > 0.8
+        for: 3m
+        labels:
+          severity: warning
+          service: phoenix-api
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "Connection pool usage is {{ $value | humanizePercentage }} ({{ $labels.db_name }})"
+          dashboard: "http://grafana:3000/d/database"
+          runbook: "https://runbooks.example.com/db-connection-pool"
+
+      # Cache Hit Rate Low
+      - alert: LowCacheHitRate
+        expr: rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) < 0.7
+        for: 10m
+        labels:
+          severity: warning
+          service: phoenix-api
+        annotations:
+          summary: "Low Redis cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }}"
+          dashboard: "http://grafana:3000/d/redis"
+          runbook: "https://runbooks.example.com/cache-hitrate"
+
+      # Task Queue Backed Up
+      - alert: TaskQueueBackedUp
+        expr: celery_queue_length > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: celery-worker
+        annotations:
+          summary: "Celery task queue is backed up"
+          description: "Queue '{{ $labels.queue }}' has {{ $value }} tasks pending"
+          dashboard: "http://grafana:3000/d/celery"
+          runbook: "https://runbooks.example.com/task-queue-backup"
+
+      # Worker Down
+      - alert: CeleryWorkerDown
+        expr: celery_worker_active_tasks == 0 and (time() - celery_worker_last_heartbeat) > 300
+        for: 5m
+        labels:
+          severity: critical
+          service: celery-worker
+        annotations:
+          summary: "Celery worker is down or unhealthy"
+          description: "Worker '{{ $labels.worker_name }}' has not sent heartbeat for 5+ minutes"
+          dashboard: "http://grafana:3000/d/celery"
+          runbook: "https://runbooks.example.com/worker-down"
+
+  # Infrastructure Alerts
+  - name: infrastructure_alerts
+    interval: 30s
+    rules:
+      # Pod Restart Loop
+      - alert: PodRestartingFrequently
+        expr: rate(kube_pod_container_status_restarts_total{namespace="phoenix"}[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: kubernetes
+        annotations:
+          summary: "Pod is restarting frequently"
+          description: "Pod '{{ $labels.pod }}' in namespace '{{ $labels.namespace }}' has restarted {{ $value | humanize }} times in 15 minutes"
+          dashboard: "http://grafana:3000/d/kubernetes-pods"
+          runbook: "https://runbooks.example.com/pod-restart-loop"
+
+      # Node CPU High
+      - alert: NodeCPUHigh
+        expr: (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance)) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Node CPU usage is high"
+          description: "CPU usage on node '{{ $labels.node }}' is {{ $value | humanizePercentage }}"
+          dashboard: "http://grafana:3000/d/nodes"
+          runbook: "https://runbooks.example.com/node-cpu-high"
+
+      # Node Memory High
+      - alert: NodeMemoryHigh
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Node memory usage is high"
+          description: "Memory usage on node '{{ $labels.node }}' is {{ $value | humanizePercentage }}"
+          dashboard: "http://grafana:3000/d/nodes"
+          runbook: "https://runbooks.example.com/node-memory-high"
+
+      # Node Disk Usage High
+      - alert: NodeDiskUsageHigh
+        expr: (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Node disk usage is high"
+          description: "Disk usage on node '{{ $labels.node }}' ({{ $labels.device }}) is {{ $value | humanizePercentage }}"
+          dashboard: "http://grafana:3000/d/nodes"
+          runbook: "https://runbooks.example.com/node-disk-high"
+
+      # Node Not Ready
+      - alert: KubernetesNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: kubernetes
+        annotations:
+          summary: "Kubernetes node is not ready"
+          description: "Node '{{ $labels.node }}' is not in Ready state"
+          dashboard: "http://grafana:3000/d/kubernetes-nodes"
+          runbook: "https://runbooks.example.com/node-not-ready"
+
+      # Persistent Volume Usage High
+      - alert: PersistentVolumeUsageHigh
+        expr: (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          component: storage
+        annotations:
+          summary: "Persistent volume usage is high"
+          description: "PVC '{{ $labels.persistentvolumeclaim }}' in namespace '{{ $labels.namespace }}' is {{ $value | humanizePercentage }} full"
+          dashboard: "http://grafana:3000/d/storage"
+          runbook: "https://runbooks.example.com/pvc-usage-high"
+
+  # Database Alerts
+  - name: database_alerts
+    interval: 30s
+    rules:
+      # PostgreSQL Connection Count High
+      - alert: PostgreSQLConnectionsHigh
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL connection count is high"
+          description: "{{ $value }} active connections on database '{{ $labels.datname }}'"
+          dashboard: "http://grafana:3000/d/postgres"
+          runbook: "https://runbooks.example.com/postgres-connections"
+
+      # PostgreSQL Cache Hit Ratio Low
+      - alert: PostgreSQLCacheHitRatioLow
+        expr: |
+          sum(rate(pg_stat_database_heap_blks_hit{datname="phoenix"}[5m])) 
+          / 
+          (sum(rate(pg_stat_database_heap_blks_hit{datname="phoenix"}[5m])) + sum(rate(pg_stat_database_heap_blks_read{datname="phoenix"}[5m])))
+          < 0.99
+        for: 10m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL cache hit ratio is low"
+          description: "Cache hit ratio is {{ $value | humanizePercentage }} for database '{{ $labels.datname }}'"
+          dashboard: "http://grafana:3000/d/postgres"
+          runbook: "https://runbooks.example.com/postgres-cache"
+
+      # PostgreSQL Replication Lag
+      - alert: PostgreSQLReplicationLagHigh
+        expr: pg_wal_lsn_diff(pg_current_wal_lsn(),'0/0') - pg_wal_lsn_diff(replay_lsn,'0/0') > 52428800
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL replication lag is high"
+          description: "Replication lag is {{ $value | humanize }} bytes"
+          dashboard: "http://grafana:3000/d/postgres"
+          runbook: "https://runbooks.example.com/postgres-replication-lag"
+
+  # Redis Alerts
+  - name: redis_alerts
+    interval: 30s
+    rules:
+      # Redis Memory Usage High
+      - alert: RedisMemoryUsageHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis memory usage is high"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}"
+          dashboard: "http://grafana:3000/d/redis"
+          runbook: "https://runbooks.example.com/redis-memory"
+
+      # Redis Evicted Keys
+      - alert: RedisEvictedKeysHigh
+        expr: rate(redis_evicted_keys_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis is evicting keys"
+          description: "Redis is evicting {{ $value | humanize }} keys per second"
+          dashboard: "http://grafana:3000/d/redis"
+          runbook: "https://runbooks.example.com/redis-eviction"
+
+  # Alertmanager Meta-Alerts
+  - name: alertmanager_alerts
+    interval: 30s
+    rules:
+      # Alertmanager Down
+      - alert: AlertmanagerDown
+        expr: up{job="alertmanager"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: monitoring
+        annotations:
+          summary: "Alertmanager is down"
+          description: "Alertmanager instance '{{ $labels.instance }}' is down"
+          runbook: "https://runbooks.example.com/alertmanager-down"
+
+      # Prometheus Down
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: monitoring
+        annotations:
+          summary: "Prometheus is down"
+          description: "Prometheus instance '{{ $labels.instance }}' is down"
+          runbook: "https://runbooks.example.com/prometheus-down"
+
+      # Grafana Down
+      - alert: GrafanaDown
+        expr: up{job="grafana"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: monitoring
+        annotations:
+          summary: "Grafana is down"
+          description: "Grafana instance '{{ $labels.instance }}' is down"
+          runbook: "https://runbooks.example.com/grafana-down"

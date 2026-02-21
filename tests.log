@@ -1,0 +1,72 @@
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 19c586b1-fd48-4bd6-9f81-e71360aba04c
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 9fa6e294-2180-4dfb-b639-1a48f9e8b81c
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: deedf2e8-fb9e-420e-81b4-3cf68efbff76
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 480dc2e0-3499-4c30-a540-3ee60b5ae02d
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 5d2cfe2a-ec77-4a81-b993-35fecac6a2f3
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: ddd49ee6-b698-44c8-87b2-c1f89dbf32fe
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 1b2cb80a-fa16-4e1e-a4af-007c920b78de
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: b49d152f-e249-492c-a268-a7322d2bcd99
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: test_concept
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: test_concept
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: concept_a
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: concept_b
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: concept_a
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: concept_b
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: concept_c
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:424 - Stored procedural memory: test_procedure
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:424 - Stored procedural memory: test_procedure
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:424 - Stored procedural memory: test_proc
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:424 - Stored procedural memory: high_success
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 5972fccc-b4bb-4eaa-855c-4d94c895c4eb
+2026-01-08 23:58:55 [    INFO] memory_integration.py:56 - Stored episode 5972fccc-b4bb-4eaa-855c-4d94c895c4eb for TestLearningAgent
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: test_pattern
+2026-01-08 23:58:55 [    INFO] memory_integration.py:70 - Extracted pattern test_pattern as semantic memory
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:424 - Stored procedural memory: test_strategy
+2026-01-08 23:58:55 [    INFO] memory_integration.py:83 - Stored strategy test_strategy as procedural memory
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: b48ce1d6-c372-4d3c-9b06-c49465a06e65
+2026-01-08 23:58:55 [    INFO] memory_integration.py:56 - Stored episode b48ce1d6-c372-4d3c-9b06-c49465a06e65 for TestLearningAgent
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 17013665-847a-4ec4-811f-d1522290127c
+2026-01-08 23:58:55 [    INFO] memory_integration.py:56 - Stored episode 17013665-847a-4ec4-811f-d1522290127c for TestLearningAgent
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: eb053120-7155-45a9-8a77-b4cf2b21d78d
+2026-01-08 23:58:55 [    INFO] memory_integration.py:56 - Stored episode eb053120-7155-45a9-8a77-b4cf2b21d78d for TestLearningAgent
+2026-01-08 23:58:55 [    INFO] memory_integration.py:116 - Updated episode eb053120-7155-45a9-8a77-b4cf2b21d78d based on feedback: positive feedback
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: test_concept
+2026-01-08 23:58:55 [    INFO] memory_integration.py:133 - Retrieved knowledge for test_concept
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:424 - Stored procedural memory: effective_strategy
+2026-01-08 23:58:55 [    INFO] memory_integration.py:141 - Selected strategy effective_strategy for task_a (success: 100.00%)
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: decision_type
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 283523e4-69fe-4a99-a66d-48729151e168
+2026-01-08 23:58:55 [    INFO] memory_integration.py:133 - Retrieved knowledge for decision_type
+2026-01-08 23:58:55 [    INFO] memory_integration.py:175 - Made informed decision: decision_type
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 3ad147b3-b686-4ffd-b3d4-85d80bf7e346
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: c897b64f-92ba-495b-bec8-a44fa9bcbc2c
+2026-01-08 23:58:55 [    INFO] memory_integration.py:235 - Recorded anomaly cpu_usage: 95.5
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: ba0069d8-b79b-4ffa-a8f4-af9c7bcc75ea
+2026-01-08 23:58:55 [    INFO] memory_integration.py:235 - Recorded anomaly metric_a: 100
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 0d9db440-24d2-4f4d-ad3e-fa8cd11872aa
+2026-01-08 23:58:55 [    INFO] memory_integration.py:235 - Recorded anomaly metric_a: 101
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 3861ccf2-cbef-41ca-a871-e1677ed7dd31
+2026-01-08 23:58:55 [    INFO] memory_integration.py:235 - Recorded anomaly metric_a: 99
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: metric_a_recurring_anomaly
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 8c15734f-7f76-4af0-a7a8-484db09fb13f
+2026-01-08 23:58:55 [    INFO] memory_integration.py:235 - Recorded anomaly metric_a: 100
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 2591fa5d-4383-428d-8a0c-236484385f1c
+2026-01-08 23:58:55 [    INFO] memory_integration.py:235 - Recorded anomaly metric_b: 90
+2026-01-08 23:58:55 [    INFO] memory_integration.py:298 - Enhanced LearningAgent: TestLearningAgent
+2026-01-08 23:58:55 [    INFO] memory_integration.py:305 - Enhanced DecisionAgent: TestDecisionAgent
+2026-01-08 23:58:55 [    INFO] memory_integration.py:312 - Enhanced MonitorAgent: TestMonitorAgent
+2026-01-08 23:58:55 [    INFO] memory_integration.py:298 - Enhanced LearningAgent: TestLearningAgent
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 61f2b181-ea4f-4abe-b897-048d83aef4ab
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 8d7a74a1-6222-4cab-9b61-17815472c692
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: ca75a9a5-632e-4d13-b121-824367820ec2
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 6ffeec77-6679-4379-b201-e2c256e26476
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: f5a88c57-d238-48e9-ab38-931625937180
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 0f69124f-06e9-443b-a2bd-5cece94dfc60
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: ab85a12f-3261-4369-a857-725b5cef07fd
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: e2cc964a-6475-4fb3-a9d6-400f12c2f66e
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: f355c3ae-3471-4971-9389-503da9cd4a21
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 4a8393c4-76e8-4775-963e-079f72ff2ab5
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:517 - Memory optimization complete: {'episodic_pruned': 0, 'semantic_pruned': 0, 'procedural_pruned': 0}
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:309 - Stored episodic memory: 90845438-8cdb-4d3a-8f7b-9864e2197d72
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:368 - Stored semantic memory: concept1
+2026-01-08 23:58:55 [    INFO] enhanced_memory.py:424 - Stored procedural memory: proc1

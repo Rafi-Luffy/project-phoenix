@@ -1,0 +1,948 @@
+"""
+Stress Testing and Chaos Engineering Scenarios for Phoenix
+Tests system resilience, load handling, and failure recovery
+"""
+import pytest
+import tempfile
+import shutil
+from pathlib import Path
+from uuid import uuid4
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
+import random
+
+from phoenix.core.models import FailureEvent, FailureType
+from phoenix.observer.test_runner import TestRunner
+from phoenix.observer.failure_detector import FailureDetector
+
+
+class TestStressLoadScenarios:
+    """Stress testing with high load"""
+    
+    def test_stress_large_codebase(self):
+        """Stress: Handle projects with 100+ files"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            # Create large project structure
+            for i in range(100):
+                module_dir = temp_dir / f"module_{i}"
+                module_dir.mkdir(exist_ok=True)
+                
+                (module_dir / f"code_{i}.py").write_text(f"""
+def function_{i}(x):
+    return x * {i}
+
+class Class_{i}:
+    def method_{i}(self):
+        return {i}
+""")
+                
+                (module_dir / f"test_{i}.py").write_text(f"""
+from code_{i} import function_{i}
+
+def test_function_{i}():
+    assert function_{i}(2) == {i * 2}
+""")
+            
+            # Run observer on large project
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle large codebases
+            assert result.total_tests >= 50
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_stress_concurrent_failures(self):
+        """Stress: Process multiple failures simultaneously"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            # Create project with multiple bugs
+            for i in range(20):
+                (temp_dir / f"buggy_{i}.py").write_text(f"""
+def buggy_function_{i}(x):
+    return x / 0  # Bug: division by zero
+""")
+                
+                (temp_dir / f"test_buggy_{i}.py").write_text(f"""
+from buggy_{i} import buggy_function_{i}
+
+def test_buggy_{i}():
+    assert buggy_function_{i}(10) == 10
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            # Should detect all failures
+            assert len(failures) >= 10
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_stress_deep_nested_calls(self):
+        """Stress: Handle deep call stacks"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "deep_recursion.py").write_text("""
+def recursive_function(n, accumulator=0):
+    if n <= 0:
+        return accumulator
+    return recursive_function(n - 1, accumulator + n)
+
+def deep_nested_calls(depth):
+    if depth <= 0:
+        return 1
+    return deep_nested_calls(depth - 1) * 2
+""")
+            
+            (temp_dir / "test_deep.py").write_text("""
+from deep_recursion import recursive_function, deep_nested_calls
+
+def test_deep_recursion():
+    # Test with reasonable depth
+    result = recursive_function(100)
+    assert result == 5050
+
+def test_very_deep_calls():
+    # This might hit recursion limit
+    result = deep_nested_calls(500)
+    assert result > 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # May fail due to recursion limit
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            # Should handle gracefully
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_stress_massive_data_structures(self):
+        """Stress: Handle very large data structures"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "big_data.py").write_text("""
+def process_large_list(size):
+    data = list(range(size))
+    return sum(data)
+
+def create_large_dict(size):
+    return {i: i**2 for i in range(size)}
+
+def filter_large_dataset(data, threshold):
+    # Bug: inefficient - creates multiple copies
+    result = [x for x in data if x > threshold]
+    result = [x * 2 for x in result]
+    result = [x for x in result if x < threshold * 10]
+    return result
+""")
+            
+            (temp_dir / "test_big_data.py").write_text("""
+from big_data import process_large_list, create_large_dict, filter_large_dataset
+
+def test_large_list():
+    result = process_large_list(100000)
+    assert result > 0
+
+def test_large_dict():
+    data = create_large_dict(50000)
+    assert len(data) == 50000
+
+def test_filter_performance():
+    data = list(range(100000))
+    result = filter_large_dataset(data, 50000)
+    assert len(result) > 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle large data
+            assert result.total_tests >= 3
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestChaosEngineeringScenarios:
+    """Chaos engineering - inject failures and verify recovery"""
+    
+    def test_chaos_random_exceptions(self):
+        """Chaos: Random exception injection"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "unreliable_service.py").write_text("""
+import random
+
+class UnreliableService:
+    def __init__(self, failure_rate=0.3):
+        self.failure_rate = failure_rate
+        self.call_count = 0
+    
+    def call(self):
+        self.call_count += 1
+        if random.random() < self.failure_rate:
+            raise Exception(f"Random failure on call {self.call_count}")
+        return "success"
+    
+    def call_with_retry(self, max_retries=3):
+        for attempt in range(max_retries):
+            try:
+                return self.call()
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    raise e
+                continue  # Bug: no backoff
+        return None
+""")
+            
+            (temp_dir / "test_unreliable.py").write_text("""
+from unreliable_service import UnreliableService
+
+def test_service_with_retries():
+    service = UnreliableService(failure_rate=0.5)
+    
+    # Should eventually succeed with retries
+    successes = 0
+    for _ in range(10):
+        try:
+            result = service.call_with_retry(max_retries=5)
+            if result == "success":
+                successes += 1
+        except:
+            pass
+    
+    assert successes > 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle randomness
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_chaos_network_partition(self):
+        """Chaos: Simulate network partitions"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "distributed_cache.py").write_text("""
+import time
+
+class DistributedCache:
+    def __init__(self):
+        self.local_cache = {}
+        self.remote_cache = {}
+        self.network_available = True
+    
+    def get(self, key):
+        # Try local first
+        if key in self.local_cache:
+            return self.local_cache[key]
+        
+        # Try remote
+        if self.network_available:
+            if key in self.remote_cache:
+                value = self.remote_cache[key]
+                self.local_cache[key] = value  # Cache locally
+                return value
+        
+        return None
+    
+    def set(self, key, value):
+        self.local_cache[key] = value
+        
+        if self.network_available:
+            self.remote_cache[key] = value
+            return True
+        
+        # Bug: no queue for failed writes
+        return False
+    
+    def simulate_network_partition(self):
+        self.network_available = False
+    
+    def restore_network(self):
+        self.network_available = True
+""")
+            
+            (temp_dir / "test_distributed_cache.py").write_text("""
+from distributed_cache import DistributedCache
+
+def test_cache_during_partition():
+    cache = DistributedCache()
+    
+    # Normal operation
+    cache.set("key1", "value1")
+    assert cache.get("key1") == "value1"
+    
+    # Simulate partition
+    cache.simulate_network_partition()
+    
+    # Local cache should still work
+    assert cache.get("key1") == "value1"
+    
+    # New writes should be queued (but they're not - bug)
+    cache.set("key2", "value2")
+    
+    # Restore network
+    cache.restore_network()
+    
+    # Should sync queued writes
+    assert "key2" in cache.remote_cache
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to missing write queue
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_chaos_resource_exhaustion(self):
+        """Chaos: Resource exhaustion scenarios"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "resource_manager.py").write_text("""
+class ResourcePool:
+    def __init__(self, max_resources=10):
+        self.max_resources = max_resources
+        self.available = max_resources
+        self.in_use = 0
+    
+    def acquire(self, timeout=5):
+        import time
+        start = time.time()
+        
+        while self.available <= 0:
+            if time.time() - start > timeout:
+                raise TimeoutError("Resource pool exhausted")
+            time.sleep(0.1)
+        
+        self.available -= 1
+        self.in_use += 1
+        return True
+    
+    def release(self):
+        if self.in_use > 0:
+            self.in_use -= 1
+            self.available += 1
+        # Bug: no error if releasing when nothing in use
+""")
+            
+            (temp_dir / "test_resources.py").write_text("""
+from resource_manager import ResourcePool
+import threading
+import time
+
+def test_resource_pool_exhaustion():
+    pool = ResourcePool(max_resources=5)
+    
+    def worker():
+        pool.acquire()
+        time.sleep(0.5)
+        pool.release()
+    
+    threads = []
+    for _ in range(10):
+        t = threading.Thread(target=worker)
+        threads.append(t)
+        t.start()
+    
+    for t in threads:
+        t.join(timeout=3)
+    
+    # All resources should be back
+    assert pool.available == 5
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle resource contention
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_chaos_time_manipulation(self):
+        """Chaos: Time-based bugs (timezone, DST, leap seconds)"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "time_service.py").write_text("""
+from datetime import datetime, timedelta
+
+class TimeService:
+    def __init__(self):
+        self.created_at = datetime.now()
+    
+    def get_age_seconds(self):
+        return (datetime.now() - self.created_at).total_seconds()
+    
+    def is_expired(self, ttl_seconds):
+        return self.get_age_seconds() > ttl_seconds
+    
+    def schedule_task(self, delay_seconds):
+        run_at = datetime.now() + timedelta(seconds=delay_seconds)
+        return run_at
+    
+    def get_business_days_between(self, start, end):
+        # Bug: doesn't account for holidays
+        days = (end - start).days
+        return days  # Should exclude weekends
+""")
+            
+            (temp_dir / "test_time.py").write_text("""
+from time_service import TimeService
+from datetime import datetime, timedelta
+import time
+
+def test_expiration():
+    service = TimeService()
+    time.sleep(0.1)
+    
+    assert service.is_expired(0.05) == True
+    assert service.is_expired(10) == False
+
+def test_business_days():
+    service = TimeService()
+    
+    # Monday to Friday
+    start = datetime(2025, 1, 6)  # Monday
+    end = datetime(2025, 1, 10)    # Friday
+    
+    days = service.get_business_days_between(start, end)
+    assert days == 4  # Should be 4 business days, not 4 total days
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail on business days calculation
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestExtremeBoundaryConditions:
+    """Extreme boundary and corner cases"""
+    
+    def test_extreme_max_int_overflow(self):
+        """Extreme: Maximum integer boundaries"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "big_numbers.py").write_text("""
+import sys
+
+def add_numbers(a, b):
+    return a + b
+
+def multiply_safe(a, b, max_value=sys.maxsize):
+    result = a * b
+    if result > max_value:
+        raise OverflowError("Result too large")
+    return result
+
+def calculate_factorial_iterative(n):
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
+""")
+            
+            (temp_dir / "test_big_numbers.py").write_text("""
+from big_numbers import add_numbers, multiply_safe, calculate_factorial_iterative
+import sys
+
+def test_max_int():
+    max_val = sys.maxsize
+    result = add_numbers(max_val, 1)
+    assert result > max_val
+
+def test_multiplication_overflow():
+    import pytest
+    with pytest.raises(OverflowError):
+        multiply_safe(sys.maxsize, 2)
+
+def test_huge_factorial():
+    result = calculate_factorial_iterative(1000)
+    assert result > 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle big integers
+            assert result.total_tests >= 3
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_extreme_floating_point_precision(self):
+        """Extreme: Floating point precision issues"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "float_calc.py").write_text("""
+def add_floats(a, b):
+    return a + b
+
+def compare_floats(a, b):
+    return a == b  # Bug: direct comparison
+
+def sum_many_floats(values):
+    total = 0.0
+    for v in values:
+        total += v
+    return total
+
+def are_close(a, b, tolerance=1e-9):
+    return abs(a - b) < tolerance
+""")
+            
+            (temp_dir / "test_floats.py").write_text("""
+from float_calc import add_floats, compare_floats, sum_many_floats, are_close
+
+def test_float_precision():
+    result = add_floats(0.1, 0.2)
+    # Bug: 0.1 + 0.2 != 0.3 in floating point
+    assert compare_floats(result, 0.3) == False
+    assert are_close(result, 0.3) == True
+
+def test_accumulation_error():
+    values = [0.1] * 1000
+    result = sum_many_floats(values)
+    assert are_close(result, 100.0, tolerance=1e-6)
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should expose floating point issues
+            assert result.total_tests >= 2
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_extreme_string_sizes(self):
+        """Extreme: Very long strings"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "string_ops.py").write_text("""
+def reverse_string(s):
+    return s[::-1]
+
+def find_substring(haystack, needle):
+    # Bug: inefficient for large strings
+    return needle in haystack
+
+def truncate_string(s, max_length, suffix="..."):
+    if len(s) <= max_length:
+        return s
+    return s[:max_length] + suffix  # Bug: doesn't account for suffix length
+""")
+            
+            (temp_dir / "test_strings.py").write_text("""
+from string_ops import reverse_string, find_substring, truncate_string
+
+def test_very_long_string():
+    long_string = "a" * 1000000
+    reversed_str = reverse_string(long_string)
+    assert len(reversed_str) == 1000000
+
+def test_substring_search():
+    haystack = "x" * 1000000 + "needle" + "y" * 1000000
+    assert find_substring(haystack, "needle") == True
+
+def test_truncate_bug():
+    s = "Hello, World!"
+    result = truncate_string(s, 10)
+    assert len(result) <= 10  # Should be True but will fail
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail on truncate bug
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestComplexStateManagement:
+    """Complex state transitions and management"""
+    
+    def test_complex_state_machine(self):
+        """Complex: State machine with many transitions"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "state_machine.py").write_text("""
+class OrderStateMachine:
+    STATES = ["CREATED", "PAID", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"]
+    
+    TRANSITIONS = {
+        "CREATED": ["PAID", "CANCELLED"],
+        "PAID": ["PROCESSING", "CANCELLED"],
+        "PROCESSING": ["SHIPPED", "CANCELLED"],
+        "SHIPPED": ["DELIVERED"],
+        "DELIVERED": [],
+        "CANCELLED": []
+    }
+    
+    def __init__(self):
+        self.state = "CREATED"
+        self.history = [self.state]
+    
+    def transition(self, new_state):
+        if new_state not in self.TRANSITIONS.get(self.state, []):
+            raise ValueError(f"Invalid transition from {self.state} to {new_state}")
+        
+        self.state = new_state
+        self.history.append(new_state)
+    
+    def can_transition_to(self, state):
+        return state in self.TRANSITIONS.get(self.state, [])
+    
+    def cancel(self):
+        # Bug: doesn't check if cancellation is allowed
+        self.state = "CANCELLED"
+        self.history.append("CANCELLED")
+""")
+            
+            (temp_dir / "test_state_machine.py").write_text("""
+from state_machine import OrderStateMachine
+import pytest
+
+def test_valid_transitions():
+    order = OrderStateMachine()
+    
+    order.transition("PAID")
+    assert order.state == "PAID"
+    
+    order.transition("PROCESSING")
+    assert order.state == "PROCESSING"
+
+def test_invalid_transition():
+    order = OrderStateMachine()
+    
+    with pytest.raises(ValueError):
+        order.transition("DELIVERED")  # Can't go directly to DELIVERED
+
+def test_cancel_after_delivery():
+    order = OrderStateMachine()
+    order.transition("PAID")
+    order.transition("PROCESSING")
+    order.transition("SHIPPED")
+    order.transition("DELIVERED")
+    
+    # Bug: should not allow cancellation after delivery
+    order.cancel()
+    assert order.state != "CANCELLED"  # This will fail
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail on cancel after delivery
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_complex_transaction_rollback(self):
+        """Complex: Transaction rollback with nested operations"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "transaction.py").write_text("""
+class Transaction:
+    def __init__(self):
+        self.operations = []
+        self.committed = False
+        self.rolled_back = False
+    
+    def add_operation(self, operation):
+        if self.committed or self.rolled_back:
+            raise Exception("Transaction already finalized")
+        self.operations.append(operation)
+    
+    def commit(self):
+        if self.rolled_back:
+            raise Exception("Cannot commit rolled back transaction")
+        
+        for op in self.operations:
+            op.execute()
+        
+        self.committed = True
+    
+    def rollback(self):
+        if self.committed:
+            raise Exception("Cannot rollback committed transaction")
+        
+        # Bug: doesn't execute rollback operations in reverse
+        for op in self.operations:
+            if hasattr(op, 'undo'):
+                op.undo()
+        
+        self.rolled_back = True
+
+class Operation:
+    def __init__(self, name, execute_fn, undo_fn=None):
+        self.name = name
+        self.execute_fn = execute_fn
+        self.undo_fn = undo_fn
+        self.executed = False
+    
+    def execute(self):
+        self.execute_fn()
+        self.executed = True
+    
+    def undo(self):
+        if self.undo_fn and self.executed:
+            self.undo_fn()
+            self.executed = False
+""")
+            
+            (temp_dir / "test_transaction.py").write_text("""
+from transaction import Transaction, Operation
+
+def test_transaction_commit():
+    state = {"value": 0}
+    
+    txn = Transaction()
+    txn.add_operation(Operation("inc", lambda: state.update({"value": state["value"] + 1})))
+    txn.add_operation(Operation("inc", lambda: state.update({"value": state["value"] + 1})))
+    
+    txn.commit()
+    assert state["value"] == 2
+
+def test_transaction_rollback():
+    state = {"value": 0}
+    
+    txn = Transaction()
+    txn.add_operation(Operation(
+        "inc",
+        lambda: state.update({"value": state["value"] + 1}),
+        lambda: state.update({"value": state["value"] - 1})
+    ))
+    
+    # Execute to change state
+    for op in txn.operations:
+        op.execute()
+    
+    assert state["value"] == 1
+    
+    # Rollback
+    txn.rollback()
+    assert state["value"] == 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle transactions
+            assert result.total_tests >= 2
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestRealisticProductionScenarios:
+    """Production-like scenarios"""
+    
+    def test_production_rate_limiting(self):
+        """Production: Rate limiting implementation"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "rate_limiter.py").write_text("""
+import time
+from collections import deque
+
+class RateLimiter:
+    def __init__(self, max_requests, time_window):
+        self.max_requests = max_requests
+        self.time_window = time_window
+        self.requests = deque()
+    
+    def allow_request(self):
+        now = time.time()
+        
+        # Remove old requests
+        while self.requests and self.requests[0] < now - self.time_window:
+            self.requests.popleft()
+        
+        # Bug: doesn't check limit correctly
+        if len(self.requests) < self.max_requests:
+            self.requests.append(now)
+            return True
+        
+        return False
+    
+    def get_remaining_requests(self):
+        now = time.time()
+        while self.requests and self.requests[0] < now - self.time_window:
+            self.requests.popleft()
+        
+        return max(0, self.max_requests - len(self.requests))
+""")
+            
+            (temp_dir / "test_rate_limiter.py").write_text("""
+from rate_limiter import RateLimiter
+import time
+
+def test_rate_limiting():
+    limiter = RateLimiter(max_requests=5, time_window=1.0)
+    
+    # Should allow first 5 requests
+    for i in range(5):
+        assert limiter.allow_request() == True
+    
+    # Should deny 6th request
+    assert limiter.allow_request() == False
+    
+    # After time window, should allow again
+    time.sleep(1.1)
+    assert limiter.allow_request() == True
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should implement rate limiting correctly
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_production_feature_flags(self):
+        """Production: Feature flag system"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "feature_flags.py").write_text("""
+class FeatureFlags:
+    def __init__(self):
+        self.flags = {}
+        self.user_overrides = {}
+    
+    def set_flag(self, flag_name, enabled, percentage=100):
+        self.flags[flag_name] = {
+            "enabled": enabled,
+            "percentage": percentage
+        }
+    
+    def is_enabled(self, flag_name, user_id=None):
+        if flag_name not in self.flags:
+            return False
+        
+        # Check user override
+        if user_id and user_id in self.user_overrides.get(flag_name, {}):
+            return self.user_overrides[flag_name][user_id]
+        
+        flag = self.flags[flag_name]
+        if not flag["enabled"]:
+            return False
+        
+        # Bug: percentage rollout not implemented correctly
+        return True
+    
+    def override_for_user(self, flag_name, user_id, enabled):
+        if flag_name not in self.user_overrides:
+            self.user_overrides[flag_name] = {}
+        self.user_overrides[flag_name][user_id] = enabled
+""")
+            
+            (temp_dir / "test_feature_flags.py").write_text("""
+from feature_flags import FeatureFlags
+
+def test_basic_flag():
+    ff = FeatureFlags()
+    ff.set_flag("new_ui", True)
+    
+    assert ff.is_enabled("new_ui") == True
+
+def test_percentage_rollout():
+    ff = FeatureFlags()
+    ff.set_flag("beta_feature", True, percentage=50)
+    
+    # Should be enabled for ~50% of users
+    enabled_count = 0
+    for user_id in range(100):
+        if ff.is_enabled("beta_feature", user_id):
+            enabled_count += 1
+    
+    # Should be roughly 50 (with some tolerance)
+    assert 30 <= enabled_count <= 70  # Will fail - always 100
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to percentage rollout bug
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)

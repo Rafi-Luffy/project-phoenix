@@ -1,0 +1,228 @@
+# AlertManager Configuration
+# Routes alerts and manages notifications
+# Version: 1.0.0
+# Updated: December 28, 2025
+
+---
+global:
+  resolve_timeout: 5m
+  slack_api_url: '${SLACK_WEBHOOK_URL}'
+  pagerduty_url: 'https://events.pagerduty.com/v2/enqueue'
+  opsgenie_api_url: 'https://api.opsgenie.com/'
+
+# Template files for notifications
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# Routing configuration
+route:
+  # Default receiver
+  receiver: 'default'
+  
+  # Repeat alerts every 4 hours
+  repeat_interval: 4h
+  
+  # Group alerts by labels
+  group_by:
+    - '{{ .GroupLabels.alertname }}'
+    - '{{ .GroupLabels.severity }}'
+    - '{{ .GroupLabels.service }}'
+  
+  # Wait 10 seconds before sending initial notification
+  group_wait: 10s
+  
+  # Wait 10 seconds before sending subsequent notifications
+  group_interval: 10s
+  
+  # Sub-routes for specific alert types
+  routes:
+    # Critical alerts - Immediate notification
+    - match:
+        severity: critical
+      receiver: 'critical-pagerduty'
+      group_wait: 0s
+      group_interval: 1m
+      repeat_interval: 1h
+      continue: true
+
+    # Critical alerts - Also send to Slack
+    - match:
+        severity: critical
+      receiver: 'critical-slack'
+      group_wait: 0s
+      group_interval: 1m
+      repeat_interval: 1h
+      continue: true
+
+    # Warning alerts - Slack only
+    - match:
+        severity: warning
+      receiver: 'warning-slack'
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      continue: false
+
+    # Infrastructure alerts
+    - match:
+        component: infrastructure
+      receiver: 'infrastructure'
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 4h
+      continue: true
+
+    # Database alerts
+    - match:
+        service: postgres
+      receiver: 'database'
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 4h
+      continue: true
+
+    # Application alerts
+    - match:
+        service: phoenix-api
+      receiver: 'application'
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 4h
+      continue: true
+
+    # Monitoring system alerts
+    - match:
+        component: monitoring
+      receiver: 'critical-slack'
+      group_wait: 0s
+      group_interval: 1m
+      repeat_interval: 1h
+      continue: true
+
+    # Catch-all
+    - match:
+        severity: info
+      receiver: 'null'
+      continue: false
+
+# Inhibition rules - Suppress certain alerts
+inhibit_rules:
+  # Suppress warning alerts if critical alert exists
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'service', 'instance']
+
+  # Suppress info alerts if warning exists
+  - source_match:
+      severity: 'warning'
+    target_match:
+      severity: 'info'
+    equal: ['alertname', 'service']
+
+  # Suppress pod restart warnings if node is down
+  - source_match:
+      alertname: 'KubernetesNodeNotReady'
+    target_match:
+      alertname: 'PodRestartingFrequently'
+    equal: ['node']
+
+# Receivers configuration
+receivers:
+  # Null receiver (silences alerts)
+  - name: 'null'
+
+  # Default receiver
+  - name: 'default'
+    slack_configs:
+      - channel: '#alerts'
+        title: 'Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+        send_resolved: true
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+
+  # Critical alerts via PagerDuty
+  - name: 'critical-pagerduty'
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+        description: '{{ .GroupLabels.alertname }}: {{ .Alerts.Firing | len }} firing'
+        details:
+          firing: '{{ template "pagerduty.default.instances" .Alerts.Firing }}'
+        client: 'Prometheus'
+        client_url: '{{ .ExternalURL }}'
+
+  # Critical alerts via Slack
+  - name: 'critical-slack'
+    slack_configs:
+      - channel: '#critical-alerts'
+        title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}\nDashboard: {{ .Annotations.dashboard }}\n{{ end }}'
+        send_resolved: true
+        color: 'danger'
+        actions:
+          - type: button
+            text: 'View in Prometheus'
+            url: '{{ .ExternalURL }}'
+          - type: button
+            text: 'View Dashboard'
+            url: '{{ (index .Alerts 0).Annotations.dashboard }}'
+
+  # Warning alerts via Slack
+  - name: 'warning-slack'
+    slack_configs:
+      - channel: '#alerts'
+        title: '⚠️  WARNING: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}\n{{ end }}'
+        send_resolved: true
+        color: 'warning'
+
+  # Infrastructure alerts
+  - name: 'infrastructure'
+    slack_configs:
+      - channel: '#infrastructure-alerts'
+        title: '🔧 Infrastructure: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}'
+        send_resolved: true
+
+  # Database alerts
+  - name: 'database'
+    slack_configs:
+      - channel: '#database-alerts'
+        title: '🗄️  Database: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}\nService: {{ .Labels.service }}\n{{ end }}'
+        send_resolved: true
+
+  # Application alerts
+  - name: 'application'
+    slack_configs:
+      - channel: '#app-alerts'
+        title: '⚙️  Application: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}\nService: {{ .Labels.service }}\n{{ end }}'
+        send_resolved: true
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_APP_SERVICE_KEY}'
+        description: '{{ .GroupLabels.alertname }} - {{ .Alerts.Firing | len }} firing'
+        client_url: '{{ .ExternalURL }}'
+
+  # Opsgenie integration (optional)
+  - name: 'opsgenie'
+    opsgenie_configs:
+      - api_key: '${OPSGENIE_API_KEY}'
+        responders:
+          - type: team
+            name: 'DevOps'
+        tags:
+          - 'prometheus'
+          - '{{ .GroupLabels.severity }}'
+
+  # Email notifications (optional)
+  - name: 'email'
+    email_configs:
+      - to: '${ALERT_EMAIL}'
+        from: 'alerts@projectphoenix.com'
+        smarthost: '${SMTP_HOST}:{{ .SMTP_PORT }}'
+        auth_username: '${SMTP_USER}'
+        auth_password: '${SMTP_PASSWORD}'
+        headers:
+          Subject: '[{{ .Status | toUpper }}] {{ .GroupLabels.alertname }}'

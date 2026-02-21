@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /workspace
+
+# Install common dependencies for testing
+RUN pip install --no-cache-dir \
+    pytest \
+    pytest-cov \
+    pytest-json-report
+
+# This image is used as a base for sandboxes
+CMD ["pytest"]

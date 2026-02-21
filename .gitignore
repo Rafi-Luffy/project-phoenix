@@ -1,0 +1,68 @@
+# ── Python ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+*.so
+
+# ── Environment & Secrets ────────────────────────────────
+.env
+.env.local
+.env*.local
+.env.development
+.env.production
+.env.test
+*.env
+
+# ── Node / Frontend ──────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+node_modules/
+
+# ── Coverage & Test Reports ──────────────────────────────
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+.pytest_cache/
+.tox/
+
+# ── Database / Data files ────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+data/backups/
+data/cache/
+logs/
+
+# ── Docker / Infrastructure ──────────────────────────────
+.docker/
+
+# ── IDE / OS ─────────────────────────────────────────────
+.DS_Store
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+Thumbs.db
+
+# ── Ollama learning data (large, generated) ──────────────
+ollama_learning_data/
+
+# ── Monitoring / Generated ───────────────────────────────
+monitoring/
+infrastructure/
+
+# ── Build artifacts ──────────────────────────────────────
+*.pyc
+dist/

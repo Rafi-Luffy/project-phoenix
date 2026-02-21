@@ -1,0 +1,307 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+    paths:
+      - 'backend/**'
+      - 'Dockerfile.backend'
+      - 'helm/phoenix-api/**'
+      - '.github/workflows/deploy-production.yml'
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: 'Docker image tag to deploy'
+        required: true
+      environment:
+        description: 'Environment (production, production-blue, production-green)'
+        required: true
+        default: 'production'
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: project-phoenix-prod
+  NAMESPACE: phoenix
+  HELM_CHART: ./helm/phoenix-api
+  HELM_VALUES_FILE: ./helm/phoenix-api/values/values-prod.yaml
+
+jobs:
+  approval:
+    name: Manual Approval Required
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags')
+    environment:
+      name: production
+      deployment-branch: main
+
+    steps:
+      - name: Approve deployment
+        run: echo "Deployment approved for main branch push"
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: approval
+    if: |
+      always() && (
+        github.event_name == 'workflow_dispatch' ||
+        startsWith(github.ref, 'refs/tags/v') ||
+        (github.event_name == 'push' && github.ref == 'refs/heads/main')
+      )
+    environment:
+      name: production
+      deployment-branch: main
+    permissions:
+      id-token: write
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-production
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.EKS_CLUSTER_NAME }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Get image tag
+        id: image-tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            TAG=${{ github.event.inputs.image-tag }}
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAG=${GITHUB_REF#refs/tags/}
+          else
+            TAG=${{ github.sha }}
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "Image tag: ${TAG}"
+
+      - name: Get ECR repository URL
+        id: ecr-url
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          ECR_URL="${ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/phoenix-api"
+          echo "url=${ECR_URL}" >> $GITHUB_OUTPUT
+          echo "ECR URL: ${ECR_URL}"
+
+      - name: Verify image exists in ECR
+        run: |
+          aws ecr describe-images \
+            --repository-name phoenix-api \
+            --image-ids imageTag=${{ steps.image-tag.outputs.tag }} \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Create deployment record
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production',
+              auto_merge: false,
+              required_contexts: [],
+              description: 'Production deployment ${{ steps.image-tag.outputs.tag }}'
+            });
+            core.setOutput('deployment_id', deployment.data.id);
+
+      - name: Validate Helm chart
+        run: |
+          helm lint ${{ env.HELM_CHART }}
+          helm template phoenix-api ${{ env.HELM_CHART }} \
+            -f ${{ env.HELM_VALUES_FILE }} \
+            --set image.tag=${{ steps.image-tag.outputs.tag }}
+
+      - name: Get current deployment
+        id: current-deployment
+        run: |
+          CURRENT=$(helm list -n ${{ env.NAMESPACE }} -o json | jq -r '.[0].name // "none"')
+          echo "name=${CURRENT}" >> $GITHUB_OUTPUT
+
+      - name: Backup current release
+        if: steps.current-deployment.outputs.name != 'none'
+        run: |
+          helm get values phoenix-api -n ${{ env.NAMESPACE }} > /tmp/backup-values.yaml
+          kubectl get all -n ${{ env.NAMESPACE }} -o yaml > /tmp/backup-resources.yaml
+          echo "Backup created"
+
+      - name: "Blue-Green: Deploy new version (Green)"
+        if: github.event.inputs.environment == 'production-green' || github.event_name != 'workflow_dispatch'
+        run: |
+          helm upgrade --install phoenix-api ${{ env.HELM_CHART }} \
+            -f ${{ env.HELM_VALUES_FILE }} \
+            -n ${{ env.NAMESPACE }} \
+            --create-namespace \
+            --set image.repository="${{ steps.ecr-url.outputs.url }}" \
+            --set image.tag="${{ steps.image-tag.outputs.tag }}" \
+            --set config.environment="production" \
+            --wait \
+            --timeout 10m \
+            --atomic
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/phoenix-api -n ${{ env.NAMESPACE }} --timeout=10m
+          kubectl get pods -n ${{ env.NAMESPACE }}
+          kubectl get svc -n ${{ env.NAMESPACE }}
+
+      - name: Wait for pods to be ready
+        run: |
+          kubectl wait --for=condition=Ready pod \
+            -l app.kubernetes.io/name=phoenix-api \
+            -n ${{ env.NAMESPACE }} \
+            --timeout=600s
+
+      - name: Get service endpoint
+        id: service-endpoint
+        run: |
+          SERVICE_IP=$(kubectl get svc -n ${{ env.NAMESPACE }} phoenix-api \
+            -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
+          if [ -z "$SERVICE_IP" ]; then
+            SERVICE_IP=$(kubectl get svc -n ${{ env.NAMESPACE }} phoenix-api \
+              -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "localhost")
+          fi
+          echo "endpoint=${SERVICE_IP}" >> $GITHUB_OUTPUT
+          echo "Service endpoint: ${SERVICE_IP}"
+
+      - name: Health check
+        id: health-check
+        run: |
+          SERVICE_ENDPOINT=${{ steps.service-endpoint.outputs.endpoint }}
+          echo "Checking health at: http://${SERVICE_ENDPOINT}:80/health"
+          
+          for i in {1..60}; do
+            if curl -f http://${SERVICE_ENDPOINT}:80/health 2>/dev/null | grep -q "ok"; then
+              echo "Health check passed!"
+              echo "status=passed" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            echo "Attempt $i: Health check failed, retrying..."
+            sleep 2
+          done
+          
+          echo "Health check failed after 60 attempts"
+          echo "status=failed" >> $GITHUB_OUTPUT
+          exit 1
+        continue-on-error: true
+
+      - name: Rollback on failed health check
+        if: steps.health-check.outputs.status == 'failed'
+        run: |
+          echo "Health check failed! Rolling back deployment..."
+          helm rollback phoenix-api -n ${{ env.NAMESPACE }}
+          kubectl rollout status deployment/phoenix-api -n ${{ env.NAMESPACE }} --timeout=5m
+          exit 1
+
+      - name: Run production smoke tests
+        run: |
+          pip install requests pyyaml
+          python << 'EOF'
+          import requests
+          import time
+          import sys
+          
+          endpoint = '${{ steps.service-endpoint.outputs.endpoint }}'
+          base_url = f'http://{endpoint}:80'
+          
+          # Production tests
+          tests = [
+              ('Health check', f'{base_url}/health', 'ok'),
+              ('Readiness check', f'{base_url}/health/ready', 'ok'),
+              ('API docs', f'{base_url}/docs', 'swagger'),
+          ]
+          
+          failed = 0
+          for test_name, url, expected in tests:
+              try:
+                  response = requests.get(url, timeout=10)
+                  if response.status_code == 200 and expected in response.text:
+                      print(f'✓ {test_name}: PASS')
+                  else:
+                      print(f'✗ {test_name}: FAIL (status={response.status_code})')
+                      failed += 1
+              except Exception as e:
+                  print(f'✗ {test_name}: {str(e)}')
+                  failed += 1
+          
+          sys.exit(1 if failed > 0 else 0)
+          EOF
+        continue-on-error: true
+
+      - name: Wait for application stability
+        run: |
+          echo "Monitoring application stability for 2 minutes..."
+          
+          for i in {1..12}; do
+            FAILED_PODS=$(kubectl get pods -n ${{ env.NAMESPACE }} -l app=phoenix-api \
+              --field-selector=status.phase!=Running --no-headers 2>/dev/null | wc -l)
+            
+            if [ "$FAILED_PODS" -gt 0 ]; then
+              echo "Warning: $FAILED_PODS pods not in Running state"
+            else
+              echo "All pods are stable"
+            fi
+            
+            sleep 10
+          done
+
+      - name: Post deployment status
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const deployment_id = '${{ steps.current-deployment.outputs.name }}'
+            const status = '${{ job.status }}' === 'success' ? 'success' : 'failure'
+            
+            github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id || 0,
+              state: status,
+              environment_url: 'https://api.projectphoenix.com',
+              description: `Production deployment ${{ steps.image-tag.outputs.tag }} ${status}`
+            });
+
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Production deployment ${{ job.status }}
+            Image: ${{ steps.image-tag.outputs.tag }}
+            Cluster: ${{ env.EKS_CLUSTER_NAME }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          fields: repo,message,commit,author
+        continue-on-error: true
+
+      - name: Post deployment summary
+        if: always()
+        run: |
+          echo "## Production Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image Tag**: ${{ steps.image-tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cluster**: ${{ env.EKS_CLUSTER_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Namespace**: ${{ env.NAMESPACE }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service Endpoint**: ${{ steps.service-endpoint.outputs.endpoint }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY

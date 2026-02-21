@@ -1,0 +1,294 @@
+# Prometheus Configuration
+# Scrapes metrics from application and infrastructure components
+# Version: 1.0.0
+# Updated: December 28, 2025
+
+---
+global:
+  scrape_interval: 15s           # Scrape every 15 seconds
+  evaluation_interval: 15s       # Evaluate rules every 15 seconds
+  external_labels:
+    cluster: 'project-phoenix'
+    environment: '${ENVIRONMENT:-production}'
+    region: '${AWS_REGION:-us-east-1}'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+      scheme: http
+      timeout: 10s
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - '/etc/prometheus/rules/*.yml'
+  - '/etc/prometheus/rules/*.yaml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+    scrape_timeout: 5s
+
+  # FastAPI Application Metrics
+  - job_name: 'phoenix-api'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - phoenix
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: phoenix-api
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: "8001"
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_name]
+        action: replace
+        separator: /
+        target_label: job
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        action: replace
+        target_label: node
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: pod
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    metrics_path: /metrics
+
+  # PostgreSQL Exporter
+  - job_name: 'postgres-exporter'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - phoenix
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: postgres-exporter
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: "9187"
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_name]
+        action: replace
+        separator: /
+        target_label: job
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        action: replace
+        target_label: node
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+
+  # Redis Exporter
+  - job_name: 'redis-exporter'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - phoenix
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: redis-exporter
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: "9121"
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_name]
+        action: replace
+        separator: /
+        target_label: job
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        action: replace
+        target_label: node
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+
+  # Kubernetes API Server
+  - job_name: 'kubernetes-apiservers'
+    kubernetes_sd_configs:
+      - role: endpoints
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: default;kubernetes;https
+      - target_label: __address__
+        replacement: kubernetes.default.svc:443
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Kubernetes Nodes
+  - job_name: 'kubernetes-nodes'
+    kubernetes_sd_configs:
+      - role: node
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+
+  # Kubernetes Pods via kubelet
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: 'true'
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: kubernetes_pod_name
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # Kubernetes Services (via endpoints)
+  - job_name: 'kubernetes-services'
+    kubernetes_sd_configs:
+      - role: service
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
+        action: keep
+        regex: 'true'
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+      - source_labels: [__param_target]
+        target_label: instance
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_service_name]
+        target_label: kubernetes_name
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Alertmanager
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['localhost:9093']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Node Exporter
+  - job_name: 'node-exporter'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - kube-system
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: node-exporter
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: "9100"
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_name]
+        action: replace
+        separator: /
+        target_label: job
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        action: replace
+        target_label: node
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+
+  # kube-state-metrics
+  - job_name: 'kube-state-metrics'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - kube-system
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: kube-state-metrics
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: "8080"
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+
+  # Loki Exporter (for log metrics)
+  - job_name: 'loki'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - loki
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: loki
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: keep
+        regex: "3100"
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+
+  # AWS CloudWatch Exporter
+  - job_name: 'cloudwatch'
+    scrape_interval: 5m
+    scrape_timeout: 1m
+    static_configs:
+      - targets: ['cloudwatch-exporter:9106']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'cloudwatch'
+
+  # Remote Storage (optional - for long-term storage)
+  # remote_write:
+  #   - url: "http://remote-storage-adapter:9009/write"
+  #     write_relabel_configs:
+  #       - source_labels: [__name__]
+  #         regex: '(up|container_.*|node_.*|kube_.*|prometheus_.*)'
+  #         action: drop
+
+# Enable feature flags
+feature_gates:
+  created_timestamp_metric: true

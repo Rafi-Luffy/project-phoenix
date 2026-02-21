@@ -1,0 +1,82 @@
+# Jaeger Distributed Tracing Configuration
+# Version: 1.0.0
+# Updated: December 28, 2025
+
+---
+# Agent configuration
+agent:
+  default_config:
+    disabled: false
+    reporter_log_spans: false
+    
+  # Collector configuration
+  collector:
+    host_port: jaeger-collector:14250
+    grpc:
+      enabled: true
+    http_port: 14268
+
+# Sampler configuration
+sampler:
+  type: const
+  param: 1.0  # Sample 100% of traces in development
+  # For production, use:
+  # type: probabilistic
+  # param: 0.1  # Sample 10% of traces
+
+# Reporter configuration
+reporter:
+  log_spans: false
+  local_agent_host_port: jaeger-agent:6831
+
+# Baggage configuration
+baggage_restrictions:
+  denyBaggageOnInitializationFailure: false
+  refreshInterval: 60s
+
+# Storage configuration
+storage:
+  type: elasticsearch
+  es:
+    server_urls: 'http://elasticsearch:9200'
+    max_span_age: 72h
+    num_shards: 5
+    num_replicas: 1
+    bulk_size: 5000
+    bulk_flush_interval: 200ms
+    index_prefix: jaeger
+    use_ilm: true
+    ilm:
+      enabled: true
+      policy_name: jaeger-ilm-policy
+
+# Extensions
+extensions:
+  # Health check
+  health_check:
+    endpoint: :13133
+
+# Metrics
+metrics:
+  backends:
+    - prometheus
+  prometheus:
+    endpoint: ':8889'
+
+# TLS Configuration (optional)
+tls:
+  enabled: false
+  # cert_file: /etc/jaeger/certs/server.crt
+  # key_file: /etc/jaeger/certs/server.key
+
+# Query service
+query:
+  static_files:
+    ui_config: /etc/jaeger/ui-config.json
+
+# Ingestion limits
+ingestion:
+  rate_limiting:
+    enabled: true
+    initial_consuming_printing_percentage: 0.2
+    consuming_printing_gap_percentage: 0.0

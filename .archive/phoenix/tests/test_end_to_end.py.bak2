@@ -1,0 +1,1461 @@
+"""
+End-to-End Integration Tests for Phoenix Framework
+Tests complete workflows from failure detection through remediation
+"""
+import pytest
+import tempfile
+import shutil
+from pathlib import Path
+from uuid import uuid4
+from unittest.mock import Mock, patch, MagicMock
+
+from phoenix.core.models import (
+    FailureEvent, FailureType, BugType, 
+    DiagnosticReport, Patch, ValidationResult, ValidationStatus,
+    RemediationAttempt, RemediationStatus
+)
+from phoenix.observer.test_runner import TestRunner
+from phoenix.observer.agentic_failure_detector import AgenticFailureDetector
+from phoenix.critic.critic_agent import CriticAgent
+from phoenix.programmer.programmer_agent import ProgrammerAgent
+from phoenix.validator.validator import Validator
+from phoenix.orchestrator.orchestrator import Orchestrator
+
+
+class TestEndToEndSimpleScenarios:
+    """Simple end-to-end scenarios for basic functionality"""
+    
+    def test_e2e_simple_arithmetic_bug(self):
+        """E2E: Detect and analyze simple arithmetic error"""
+        # Create test project
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            # Write buggy code
+            code_file = temp_dir / "math_ops.py"
+            code_file.write_text("""
+def add(a, b):
+    return a - b  # Bug: should be +
+
+def multiply(a, b):
+    return a * b
+""")
+            
+            # Write test
+            test_file = temp_dir / "test_math.py"
+            test_file.write_text("""
+from math_ops import add, multiply
+
+def test_add():
+    assert add(2, 3) == 5
+
+def test_multiply():
+    assert multiply(2, 3) == 6
+""")
+            
+            # Run Observer
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.total_tests >= 1
+            assert result.failed >= 1
+            
+            # Detect failures
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) >= 1
+            assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_simple_null_check(self):
+        """E2E: Detect missing null/None checks"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            code_file = temp_dir / "utils.py"
+            code_file.write_text("""
+def get_length(text):
+    return len(text)  # Bug: no None check
+""")
+            
+            test_file = temp_dir / "test_utils.py"
+            test_file.write_text("""
+from utils import get_length
+
+def test_get_length_with_none():
+    assert get_length(None) == 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.failed >= 1
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) >= 1
+            assert "NoneType" in failures[0].error_message or "None" in failures[0].error_message
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_simple_type_error(self):
+        """E2E: Detect basic type mismatches"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            code_file = temp_dir / "converter.py"
+            code_file.write_text("""
+def to_string(value):
+    return str(value)
+
+def concat(a, b):
+    return a + b  # Bug: no type validation
+""")
+            
+            test_file = temp_dir / "test_converter.py"
+            test_file.write_text("""
+from converter import concat
+
+def test_concat_mixed_types():
+    assert concat("hello", 5) == "hello5"
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            # Should detect type error
+            if len(failures) > 0:
+                assert failures[0].error_type in ["TypeError", "AssertionError"]
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndComplexScenarios:
+    """Complex scenarios with multiple interacting components"""
+    
+    def test_e2e_complex_multi_file_dependency(self):
+        """E2E: Bug spanning multiple files with dependencies"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            # Create multi-file project
+            (temp_dir / "models.py").write_text("""
+class User:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def is_adult(self):
+        return self.age >= 18  # Bug: should be > 18 in some jurisdictions
+""")
+            
+            (temp_dir / "service.py").write_text("""
+from models import User
+
+class UserService:
+    def __init__(self):
+        self.users = []
+    
+    def add_user(self, user):
+        self.users.append(user)
+    
+    def get_adults(self):
+        return [u for u in self.users if u.is_adult()]
+""")
+            
+            (temp_dir / "test_service.py").write_text("""
+from models import User
+from service import UserService
+
+def test_adult_filtering():
+    service = UserService()
+    service.add_user(User("Alice", 18))
+    service.add_user(User("Bob", 17))
+    
+    adults = service.get_adults()
+    assert len(adults) == 1
+    assert adults[0].name == "Alice"
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            # Should successfully detect and classify
+            assert len(failures) >= 0  # May pass or fail depending on interpretation
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_complex_async_race_condition(self):
+        """E2E: Detect race conditions in async code"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "async_counter.py").write_text("""
+import asyncio
+
+class Counter:
+    def __init__(self):
+        self.value = 0
+    
+    async def increment(self):
+        temp = self.value
+        await asyncio.sleep(0.001)
+        self.value = temp + 1  # Race condition
+""")
+            
+            (temp_dir / "test_async.py").write_text("""
+import asyncio
+from async_counter import Counter
+
+def test_concurrent_increments():
+    async def run_test():
+        counter = Counter()
+        await asyncio.gather(
+            counter.increment(),
+            counter.increment(),
+            counter.increment()
+        )
+        assert counter.value == 3
+    
+    asyncio.run(run_test())
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # May fail due to race condition
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type in [FailureType.TEST_FAILURE, FailureType.ASSERTION_ERROR]
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_complex_resource_leak(self):
+        """E2E: Detect resource leaks (unclosed files)"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "file_handler.py").write_text("""
+class FileHandler:
+    def read_file(self, path):
+        f = open(path, 'r')
+        data = f.read()
+        # Bug: file not closed
+        return data
+    
+    def write_file(self, path, content):
+        f = open(path, 'w')
+        f.write(content)
+        f.close()
+""")
+            
+            (temp_dir / "test_files.py").write_text("""
+from file_handler import FileHandler
+import tempfile
+import os
+
+def test_file_operations():
+    handler = FileHandler()
+    
+    # Create temp file
+    fd, path = tempfile.mkstemp()
+    os.write(fd, b"test content")
+    os.close(fd)
+    
+    try:
+        content = handler.read_file(path)
+        assert content == "test content"
+    finally:
+        os.unlink(path)
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Tests may pass but resource leak exists
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            # This is a silent bug - tests might pass
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndEdgeCases:
+    """Edge cases and boundary conditions"""
+    
+    def test_e2e_edge_empty_input(self):
+        """E2E: Handle empty/zero-length inputs"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "processor.py").write_text("""
+def process_list(items):
+    return sum(items) / len(items)  # Bug: division by zero
+""")
+            
+            (temp_dir / "test_processor.py").write_text("""
+from processor import process_list
+
+def test_empty_list():
+    assert process_list([]) == 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.failed >= 1
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) >= 1
+            assert "ZeroDivisionError" in failures[0].error_type or "division" in failures[0].error_message.lower()
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_edge_negative_numbers(self):
+        """E2E: Handle negative number edge cases"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "math_utils.py").write_text("""
+import math
+
+def sqrt_safe(x):
+    return math.sqrt(x)  # Bug: no negative check
+""")
+            
+            (temp_dir / "test_math_utils.py").write_text("""
+from math_utils import sqrt_safe
+
+def test_negative_sqrt():
+    result = sqrt_safe(-4)
+    assert result == 2j  # Expecting complex number
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert "ValueError" in failures[0].error_type or "math domain" in failures[0].error_message.lower()
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_edge_unicode_handling(self):
+        """E2E: Handle Unicode and special characters"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "text_utils.py").write_text("""
+def reverse_string(text):
+    return text[::-1]
+
+def count_chars(text):
+    return len(text)
+""")
+            
+            (temp_dir / "test_unicode.py").write_text("""
+from text_utils import reverse_string, count_chars
+
+def test_unicode_strings():
+    emoji = "Hello  World "
+    reversed_text = reverse_string(emoji)
+    assert count_chars(emoji) > 0
+    assert len(reversed_text) == len(emoji)
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle Unicode correctly
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_edge_very_large_numbers(self):
+        """E2E: Handle integer overflow scenarios"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "big_math.py").write_text("""
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)  # No overflow protection
+
+def power(base, exp):
+    return base ** exp
+""")
+            
+            (temp_dir / "test_big_math.py").write_text("""
+from big_math import factorial, power
+
+def test_large_factorial():
+    result = factorial(100)
+    assert result > 0
+
+def test_huge_power():
+    result = power(2, 1000)
+    assert result > 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Python handles big integers well, tests should pass
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_edge_circular_dependency(self):
+        """E2E: Detect circular import issues"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "module_a.py").write_text("""
+from module_b import function_b
+
+def function_a():
+    return function_b() + 1
+""")
+            
+            (temp_dir / "module_b.py").write_text("""
+from module_a import function_a
+
+def function_b():
+    return 10
+""")
+            
+            (temp_dir / "test_circular.py").write_text("""
+def test_import():
+    try:
+        from module_a import function_a
+        result = function_a()
+        assert result == 11
+    except ImportError:
+        assert False, "Circular import detected"
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will likely fail due to circular import
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert "ImportError" in failures[0].error_type or "import" in failures[0].error_message.lower()
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndRealWorldScenarios:
+    """Real-world scenarios mimicking production issues"""
+    
+    def test_e2e_realworld_api_timeout(self):
+        """E2E: API timeout handling"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "api_client.py").write_text("""
+import time
+
+class APIClient:
+    def fetch_data(self, endpoint, timeout=5):
+        time.sleep(10)  # Bug: takes longer than timeout
+        return {"data": "response"}
+    
+    def get_user(self, user_id):
+        return self.fetch_data(f"/users/{user_id}")
+""")
+            
+            (temp_dir / "test_api.py").write_text("""
+from api_client import APIClient
+import pytest
+
+def test_api_timeout():
+    client = APIClient()
+    with pytest.raises(TimeoutError):
+        client.get_user(123)
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Test expects timeout but code doesn't implement it properly
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_realworld_database_connection(self):
+        """E2E: Database connection error handling"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "database.py").write_text("""
+class Database:
+    def __init__(self, connection_string):
+        self.conn = None
+        self.connect(connection_string)
+    
+    def connect(self, conn_str):
+        # Simulated connection
+        if "invalid" in conn_str:
+            raise ConnectionError("Cannot connect")
+        self.conn = "connected"
+    
+    def query(self, sql):
+        if not self.conn:
+            raise RuntimeError("Not connected")
+        return []
+""")
+            
+            (temp_dir / "test_database.py").write_text("""
+from database import Database
+import pytest
+
+def test_invalid_connection():
+    with pytest.raises(ConnectionError):
+        db = Database("invalid://connection")
+
+def test_query_without_connection():
+    db = Database.__new__(Database)
+    db.conn = None
+    with pytest.raises(RuntimeError):
+        db.query("SELECT * FROM users")
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should handle errors properly
+            assert result.total_tests >= 2
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_realworld_json_parsing(self):
+        """E2E: JSON parsing with malformed data"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "json_handler.py").write_text("""
+import json
+
+def parse_config(json_string):
+    return json.loads(json_string)  # No error handling
+
+def get_value(config, key):
+    return config[key]  # No key existence check
+""")
+            
+            (temp_dir / "test_json.py").write_text("""
+from json_handler import parse_config, get_value
+
+def test_malformed_json():
+    result = parse_config('{"incomplete": ')
+    assert result is not None
+
+def test_missing_key():
+    config = {"name": "test"}
+    value = get_value(config, "missing_key")
+    assert value is None
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.failed >= 1
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_realworld_cache_invalidation(self):
+        """E2E: Cache invalidation bugs"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "cache.py").write_text("""
+class Cache:
+    def __init__(self):
+        self._cache = {}
+    
+    def get(self, key):
+        return self._cache.get(key)
+    
+    def set(self, key, value):
+        self._cache[key] = value
+    
+    def invalidate(self, key):
+        # Bug: doesn't actually remove from cache
+        pass
+    
+    def clear(self):
+        self._cache = {}
+""")
+            
+            (temp_dir / "test_cache.py").write_text("""
+from cache import Cache
+
+def test_cache_invalidation():
+    cache = Cache()
+    cache.set("key1", "value1")
+    
+    assert cache.get("key1") == "value1"
+    
+    cache.invalidate("key1")
+    assert cache.get("key1") is None
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.failed >= 1
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) >= 1
+            assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndConcurrencyScenarios:
+    """Concurrency and threading edge cases"""
+    
+    def test_e2e_concurrency_thread_safety(self):
+        """E2E: Thread safety issues"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "shared_resource.py").write_text("""
+import threading
+
+class SharedCounter:
+    def __init__(self):
+        self.count = 0
+    
+    def increment(self):
+        temp = self.count
+        # Simulate some work
+        temp += 1
+        self.count = temp  # Race condition
+""")
+            
+            (temp_dir / "test_threading.py").write_text("""
+from shared_resource import SharedCounter
+import threading
+
+def test_thread_safety():
+    counter = SharedCounter()
+    threads = []
+    
+    def increment_many():
+        for _ in range(100):
+            counter.increment()
+    
+    for _ in range(10):
+        t = threading.Thread(target=increment_many)
+        threads.append(t)
+        t.start()
+    
+    for t in threads:
+        t.join()
+    
+    assert counter.count == 1000
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will likely fail due to race condition
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type in [FailureType.TEST_FAILURE, FailureType.ASSERTION_ERROR]
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_concurrency_deadlock(self):
+        """E2E: Deadlock detection"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "locks.py").write_text("""
+import threading
+import time
+
+class ResourceManager:
+    def __init__(self):
+        self.lock_a = threading.Lock()
+        self.lock_b = threading.Lock()
+    
+    def method_a(self):
+        with self.lock_a:
+            time.sleep(0.01)
+            with self.lock_b:
+                return "A"
+    
+    def method_b(self):
+        with self.lock_b:
+            time.sleep(0.01)
+            with self.lock_a:  # Potential deadlock
+                return "B"
+""")
+            
+            (temp_dir / "test_deadlock.py").write_text("""
+from locks import ResourceManager
+import threading
+
+def test_no_deadlock():
+    manager = ResourceManager()
+    results = []
+    
+    def call_a():
+        results.append(manager.method_a())
+    
+    def call_b():
+        results.append(manager.method_b())
+    
+    t1 = threading.Thread(target=call_a)
+    t2 = threading.Thread(target=call_b)
+    
+    t1.start()
+    t2.start()
+    
+    t1.join(timeout=2)
+    t2.join(timeout=2)
+    
+    assert len(results) == 2
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # May timeout or fail due to deadlock
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndSecurityScenarios:
+    """Security-related edge cases"""
+    
+    def test_e2e_security_sql_injection(self):
+        """E2E: SQL injection vulnerability"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "user_db.py").write_text("""
+class UserDB:
+    def __init__(self):
+        self.users = [
+            {"id": 1, "name": "Alice", "role": "admin"},
+            {"id": 2, "name": "Bob", "role": "user"}
+        ]
+    
+    def find_user(self, username):
+        # Vulnerable: string concatenation
+        query = f"SELECT * FROM users WHERE name = '{username}'"
+        # Simulated SQL execution
+        for user in self.users:
+            if user["name"] == username:
+                return user
+        return None
+""")
+            
+            (temp_dir / "test_security.py").write_text("""
+from user_db import UserDB
+
+def test_sql_injection_attempt():
+    db = UserDB()
+    
+    # Malicious input
+    malicious = "' OR '1'='1"
+    result = db.find_user(malicious)
+    
+    # Should not return a user
+    assert result is None
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should pass (vulnerability exists but simple simulation)
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_security_path_traversal(self):
+        """E2E: Path traversal vulnerability"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "file_server.py").write_text("""
+import os
+
+class FileServer:
+    def __init__(self, base_dir):
+        self.base_dir = base_dir
+    
+    def read_file(self, filename):
+        # Vulnerable: no path validation
+        path = os.path.join(self.base_dir, filename)
+        with open(path, 'r') as f:
+            return f.read()
+""")
+            
+            (temp_dir / "test_path_traversal.py").write_text("""
+from file_server import FileServer
+import tempfile
+import os
+
+def test_path_traversal_prevention():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        server = FileServer(tmpdir)
+        
+        # Create a test file
+        test_file = os.path.join(tmpdir, "test.txt")
+        with open(test_file, 'w') as f:
+            f.write("safe content")
+        
+        # Try path traversal
+        try:
+            content = server.read_file("../../../etc/passwd")
+            assert False, "Should have prevented path traversal"
+        except:
+            pass  # Expected to fail
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Test may pass or fail depending on OS and permissions
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndPerformanceScenarios:
+    """Performance and scalability edge cases"""
+    
+    def test_e2e_performance_memory_leak(self):
+        """E2E: Detect memory leak patterns"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "data_processor.py").write_text("""
+class DataProcessor:
+    def __init__(self):
+        self.cache = []  # Bug: unbounded cache
+    
+    def process(self, data):
+        result = data * 2
+        self.cache.append(result)  # Memory leak
+        return result
+""")
+            
+            (temp_dir / "test_memory.py").write_text("""
+from data_processor import DataProcessor
+
+def test_memory_usage():
+    processor = DataProcessor()
+    
+    # Process many items
+    for i in range(1000):
+        processor.process(i)
+    
+    # Cache should have some limit
+    assert len(processor.cache) < 100, "Unbounded cache detected"
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.failed >= 1
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_performance_infinite_loop(self):
+        """E2E: Detect infinite loops"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "algorithms.py").write_text("""
+def find_value(arr, target):
+    i = 0
+    while i < len(arr):
+        if arr[i] == target:
+            return i
+        # Bug: forgot to increment i
+    return -1
+""")
+            
+            (temp_dir / "test_algorithms.py").write_text("""
+import pytest
+from algorithms import find_value
+
+@pytest.mark.timeout(1)
+def test_find_value():
+    result = find_value([1, 2, 3, 4, 5], 3)
+    assert result == 2
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will timeout
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert "timeout" in failures[0].error_message.lower() or failures[0].failure_type == FailureType.TIMEOUT
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndOrchestratorIntegration:
+    """Full orchestrator workflow tests"""
+    
+    @patch('phoenix.core.config.get_config')
+    def test_e2e_full_workflow_simple(self, mock_config):
+        """E2E: Complete workflow from detection to remediation"""
+        from phoenix.core.config import PhoenixConfig
+        config = PhoenixConfig(openai_api_key="test-key")
+        mock_config.return_value = config
+        
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            # Create simple buggy project
+            (temp_dir / "calculator.py").write_text("""
+def add(a, b):
+    return a - b  # Bug
+""")
+            
+            (temp_dir / "test_calc.py").write_text("""
+from calculator import add
+
+def test_add():
+    assert add(2, 3) == 5
+""")
+            
+            # Initialize orchestrator
+            orchestrator = Orchestrator(
+                project_id=project_id,
+                project_path=temp_dir,
+                test_command="pytest"
+            )
+            
+            # Verify orchestrator has all components
+            assert orchestrator.critic is not None
+            assert orchestrator.programmer is not None
+            assert orchestrator.validator is not None
+            
+            # Note: Full remediation would require actual LLM API calls
+            # For testing, we verify the components are initialized
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndDataValidation:
+    """Data validation and sanitization scenarios"""
+    
+    def test_e2e_data_invalid_email(self):
+        """E2E: Email validation"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "validator.py").write_text("""
+import re
+
+def validate_email(email):
+    # Weak regex
+    pattern = r'^[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z]+$'
+    return bool(re.match(pattern, email))
+""")
+            
+            (temp_dir / "test_validator.py").write_text("""
+from validator import validate_email
+
+def test_valid_emails():
+    assert validate_email("user@example.com") == True
+    assert validate_email("user.name@example.com") == True  # Should pass
+    assert validate_email("user+tag@example.co.uk") == True  # Should pass
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail on edge cases
+            assert result.failed >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_data_xss_prevention(self):
+        """E2E: XSS prevention in HTML sanitization"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "html_sanitizer.py").write_text("""
+def sanitize_html(text):
+    # Naive implementation
+    return text.replace("<script>", "").replace("</script>", "")
+""")
+            
+            (temp_dir / "test_xss.py").write_text("""
+from html_sanitizer import sanitize_html
+
+def test_xss_prevention():
+    malicious = "<script>alert('XSS')</script>"
+    result = sanitize_html(malicious)
+    assert "<script>" not in result
+    
+    # Bypass attempt
+    bypass = "<Script>alert('XSS')</Script>"
+    result = sanitize_html(bypass)
+    assert "<script>" not in result.lower()
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail on case-insensitive bypass
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestEndToEndModernTechScenarios:
+    """Cutting-edge technology scenarios (2025+)"""
+    
+    def test_e2e_modern_ai_model_inference(self):
+        """E2E: AI model inference error handling"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "ml_model.py").write_text("""
+class MLModel:
+    def __init__(self):
+        self.model = None
+    
+    def load_model(self, path):
+        # Simulated model loading
+        if path == "invalid":
+            raise ValueError("Invalid model path")
+        self.model = "loaded"
+    
+    def predict(self, input_data):
+        if self.model is None:
+            raise RuntimeError("Model not loaded")
+        
+        # Bug: no input validation
+        return input_data * 2
+""")
+            
+            (temp_dir / "test_ml.py").write_text("""
+from ml_model import MLModel
+import pytest
+
+def test_model_prediction():
+    model = MLModel()
+    model.load_model("valid_path")
+    
+    # Test with various inputs
+    assert model.predict(5) == 10
+    
+    # Edge case: None input
+    with pytest.raises(TypeError):
+        model.predict(None)
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert "TypeError" in failures[0].error_type
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_modern_quantum_simulation(self):
+        """E2E: Quantum computing simulation errors"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "quantum_sim.py").write_text("""
+import random
+
+class QuantumSimulator:
+    def __init__(self, qubits):
+        if qubits < 1:
+            raise ValueError("Need at least 1 qubit")
+        self.qubits = qubits
+        self.state = [0] * (2 ** qubits)
+        self.state[0] = 1  # |0...0> state
+    
+    def measure(self):
+        # Simplified measurement
+        total = sum(abs(x)**2 for x in self.state)
+        if abs(total - 1.0) > 0.01:  # Bug: floating point comparison
+            raise ValueError("Invalid quantum state")
+        return random.choice(range(len(self.state)))
+""")
+            
+            (temp_dir / "test_quantum.py").write_text("""
+from quantum_sim import QuantumSimulator
+
+def test_quantum_measurement():
+    sim = QuantumSimulator(2)
+    result = sim.measure()
+    assert 0 <= result < 4
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Should mostly pass
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_modern_blockchain_validation(self):
+        """E2E: Blockchain/crypto validation"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "blockchain.py").write_text("""
+import hashlib
+import time
+
+class Block:
+    def __init__(self, index, data, previous_hash):
+        self.index = index
+        self.timestamp = time.time()
+        self.data = data
+        self.previous_hash = previous_hash
+        self.hash = self.calculate_hash()
+    
+    def calculate_hash(self):
+        content = f"{self.index}{self.timestamp}{self.data}{self.previous_hash}"
+        return hashlib.sha256(content.encode()).hexdigest()
+
+class Blockchain:
+    def __init__(self):
+        self.chain = [self.create_genesis_block()]
+    
+    def create_genesis_block(self):
+        return Block(0, "Genesis", "0")
+    
+    def add_block(self, data):
+        previous_block = self.chain[-1]
+        new_block = Block(len(self.chain), data, previous_block.hash)
+        self.chain.append(new_block)
+    
+    def is_valid(self):
+        for i in range(1, len(self.chain)):
+            current = self.chain[i]
+            previous = self.chain[i-1]
+            
+            # Bug: not checking hash recalculation
+            if current.previous_hash != previous.hash:
+                return False
+        return True
+""")
+            
+            (temp_dir / "test_blockchain.py").write_text("""
+from blockchain import Blockchain
+
+def test_blockchain_validity():
+    bc = Blockchain()
+    bc.add_block("Transaction 1")
+    bc.add_block("Transaction 2")
+    
+    assert bc.is_valid() == True
+    
+    # Tamper with data
+    bc.chain[1].data = "Tampered"
+    assert bc.is_valid() == False  # Should detect tampering
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail because is_valid doesn't recalculate hashes
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_modern_graphql_resolver(self):
+        """E2E: GraphQL resolver errors"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "graphql_api.py").write_text("""
+class GraphQLResolver:
+    def __init__(self):
+        self.users = [
+            {"id": "1", "name": "Alice", "email": "alice@example.com"},
+            {"id": "2", "name": "Bob", "email": "bob@example.com"}
+        ]
+    
+    def resolve_user(self, id):
+        # Bug: no error handling for missing user
+        return next(u for u in self.users if u["id"] == id)
+    
+    def resolve_users(self, limit=10):
+        return self.users[:limit]
+""")
+            
+            (temp_dir / "test_graphql.py").write_text("""
+from graphql_api import GraphQLResolver
+import pytest
+
+def test_resolve_existing_user():
+    resolver = GraphQLResolver()
+    user = resolver.resolve_user("1")
+    assert user["name"] == "Alice"
+
+def test_resolve_nonexistent_user():
+    resolver = GraphQLResolver()
+    with pytest.raises(StopIteration):
+        resolver.resolve_user("999")
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Second test expects StopIteration
+            assert result.total_tests >= 2
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_modern_streaming_data(self):
+        """E2E: Real-time streaming data processing"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "stream_processor.py").write_text("""
+from collections import deque
+
+class StreamProcessor:
+    def __init__(self, window_size=100):
+        self.window = deque(maxlen=window_size)
+        self.total = 0
+    
+    def add_value(self, value):
+        if len(self.window) == self.window.maxlen:
+            # Bug: not subtracting removed value from total
+            pass
+        self.window.append(value)
+        self.total += value
+    
+    def get_average(self):
+        if len(self.window) == 0:
+            return 0
+        return self.total / len(self.window)
+""")
+            
+            (temp_dir / "test_stream.py").write_text("""
+from stream_processor import StreamProcessor
+
+def test_streaming_average():
+    processor = StreamProcessor(window_size=3)
+    
+    processor.add_value(10)
+    processor.add_value(20)
+    processor.add_value(30)
+    
+    assert processor.get_average() == 20.0
+    
+    # Add new value, should evict oldest
+    processor.add_value(40)
+    assert processor.get_average() == 30.0  # (20 + 30 + 40) / 3
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to incorrect average calculation
+            assert result.failed >= 1
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_e2e_modern_microservice_circuit_breaker(self):
+        """E2E: Microservice circuit breaker pattern"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "circuit_breaker.py").write_text("""
+import time
+
+class CircuitBreaker:
+    def __init__(self, failure_threshold=5, timeout=60):
+        self.failure_count = 0
+        self.failure_threshold = failure_threshold
+        self.timeout = timeout
+        self.last_failure_time = None
+        self.state = "CLOSED"  # CLOSED, OPEN, HALF_OPEN
+    
+    def call(self, func):
+        if self.state == "OPEN":
+            if time.time() - self.last_failure_time > self.timeout:
+                self.state = "HALF_OPEN"
+            else:
+                raise Exception("Circuit breaker is OPEN")
+        
+        try:
+            result = func()
+            if self.state == "HALF_OPEN":
+                self.state = "CLOSED"
+                self.failure_count = 0
+            return result
+        except Exception as e:
+            self.failure_count += 1
+            self.last_failure_time = time.time()
+            
+            # Bug: not checking threshold correctly
+            if self.failure_count > self.failure_threshold:
+                self.state = "OPEN"
+            raise e
+""")
+            
+            (temp_dir / "test_circuit_breaker.py").write_text("""
+from circuit_breaker import CircuitBreaker
+import pytest
+
+def test_circuit_breaker_opens():
+    cb = CircuitBreaker(failure_threshold=3)
+    
+    def failing_service():
+        raise Exception("Service down")
+    
+    # Trigger failures
+    for _ in range(4):
+        try:
+            cb.call(failing_service)
+        except:
+            pass
+    
+    # Circuit should be open now
+    assert cb.state == "OPEN"
+    
+    with pytest.raises(Exception, match="Circuit breaker is OPEN"):
+        cb.call(failing_service)
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Test might fail due to >= vs > bug
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)

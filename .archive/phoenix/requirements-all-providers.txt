@@ -1,0 +1,167 @@
+# Phoenix Framework - Complete Provider Support Requirements
+# Install with: pip install -r requirements-all-providers.txt
+
+# Core Phoenix Requirements
+-r requirements.txt
+
+# ============================================================================
+# COMMERCIAL CLOUD PROVIDERS
+# ============================================================================
+
+# OpenAI (GPT-4, GPT-3.5)
+openai>=1.40.0
+
+# Google Gemini
+google-generativeai>=0.7.0
+
+# Anthropic Claude
+anthropic>=0.34.0
+
+# Cohere
+cohere>=5.9.0
+
+# AI21 Labs
+ai21>=2.13.0
+
+# ============================================================================
+# HIGH-PERFORMANCE INFERENCE
+# ============================================================================
+
+# Groq (Ultra-fast)
+groq>=0.9.0
+
+# Together AI
+together>=1.2.0
+
+# Replicate
+replicate>=0.31.0
+
+# Anyscale Endpoints
+anyscale>=0.3.0  # Coming soon
+
+# ============================================================================
+# ENTERPRISE & CLOUD PLATFORMS
+# ============================================================================
+
+# Azure OpenAI (uses openai package with Azure config)
+# Already included above
+
+# AWS Bedrock
+boto3>=1.34.0
+botocore>=1.34.0
+
+# Google Cloud Vertex AI
+google-cloud-aiplatform>=1.60.0
+
+# ============================================================================
+# OPEN SOURCE / LOCAL INFERENCE
+# ============================================================================
+
+# Ollama (API client)
+# Uses requests (already in core requirements)
+
+# LM Studio (API client)
+# Uses requests (already in core requirements)
+
+# Hugging Face
+huggingface-hub[inference]>=0.24.0
+transformers>=4.44.0  # For local model loading
+
+# vLLM (local high-performance)
+# vllm>=0.5.5  # Uncomment if using vLLM server
+
+# llama-cpp-python (local inference)
+# llama-cpp-python>=0.2.88  # Uncomment if using llama.cpp
+
+# ============================================================================
+# SPECIALIZED PROVIDERS
+# ============================================================================
+
+# Mistral AI
+mistralai>=1.0.0
+
+# Perplexity AI
+# openai>=1.40.0  # Uses OpenAI-compatible API (already included)
+
+# DeepInfra
+# openai>=1.40.0  # Uses OpenAI-compatible API (already included)
+
+# Fireworks AI
+fireworks-ai>=0.15.0
+
+# ============================================================================
+# UTILITIES & OPTIONAL DEPENDENCIES
+# ============================================================================
+
+# HTTP requests (for custom endpoints)
+requests>=2.31.0
+httpx>=0.27.0
+
+# Async support
+aiohttp>=3.9.0
+
+# JSON parsing & validation
+jsonschema>=4.20.0
+
+# Token counting (for cost estimation)
+tiktoken>=0.7.0
+
+# Rate limiting
+ratelimit>=2.2.1
+
+# Retry logic
+tenacity>=8.5.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# ============================================================================
+# MONITORING & OBSERVABILITY (Optional)
+# ============================================================================
+
+# Prometheus metrics
+prometheus-client>=0.20.0
+
+# OpenTelemetry
+opentelemetry-api>=1.26.0
+opentelemetry-sdk>=1.26.0
+opentelemetry-instrumentation>=0.47b0
+
+# Sentry error tracking
+sentry-sdk>=2.12.0
+
+# ============================================================================
+# NOTES
+# ============================================================================
+
+# Installation options:
+#
+# 1. Install everything:
+#    pip install -r requirements-all-providers.txt
+#
+# 2. Install specific providers only:
+#    pip install openai anthropic  # Just OpenAI + Claude
+#
+# 3. Install local inference only:
+#    pip install huggingface-hub transformers
+#    # Then install Ollama separately: curl -fsSL https://ollama.com/install.sh | sh
+#
+# 4. Install enterprise only:
+#    pip install openai boto3 google-cloud-aiplatform
+#
+# 5. Install fast inference only:
+#    pip install groq together replicate
+#
+# Provider-specific setup:
+#
+# - Ollama: Install from https://ollama.com/
+# - LM Studio: Download from https://lmstudio.ai/
+# - vLLM: Requires CUDA for GPU support
+# - AWS Bedrock: Requires AWS credentials configured
+# - Vertex AI: Requires GCP credentials configured
+# - Azure OpenAI: Requires Azure subscription
+#
+# GPU requirements (for local models):
+# - Small models (7B-13B): 8-16 GB VRAM
+# - Medium models (30B-40B): 24-32 GB VRAM
+# - Large models (70B+): 48-80 GB VRAM or CPU with 64GB+ RAM

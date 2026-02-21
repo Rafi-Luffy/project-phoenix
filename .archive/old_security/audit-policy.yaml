@@ -1,0 +1,101 @@
+# Kubernetes Audit Policy for Project Phoenix
+# Comprehensive logging of API server activities
+
+apiVersion: audit.k8s.io/v1
+kind: Policy
+
+# Log all requests at the Metadata level
+- level: Metadata
+  omitStages:
+  - RequestReceived
+
+# Log pod exec at RequestResponse level
+- level: RequestResponse
+  verbs: ["create"]
+  resources:
+  - group: ""
+    resources: ["pods/exec", "pods/portforward"]
+
+# Log modifications to RBAC resources
+- level: RequestResponse
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: rbac.authorization.k8s.io
+    resources: ["clusterrolebindings", "clusterroles", "rolebindings", "roles"]
+
+# Log secret access
+- level: Metadata
+  verbs: ["get", "list", "create", "update", "patch", "delete"]
+  resources:
+  - group: ""
+    resources: ["secrets"]
+
+# Log configmap modifications
+- level: Metadata
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: ""
+    resources: ["configmaps"]
+
+# Log persistent volume modifications
+- level: RequestResponse
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: ""
+    resources: ["persistentvolumes", "persistentvolumeclaims"]
+
+# Log namespace modifications
+- level: RequestResponse
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: ""
+    resources: ["namespaces"]
+
+# Log service modifications
+- level: Metadata
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: ""
+    resources: ["services"]
+
+# Log authentication and authorization failures
+- level: Metadata
+  userGroups: ["system:unauthenticated"]
+
+# Log user impersonation
+- level: RequestResponse
+  verbs: ["impersonate"]
+  resources:
+  - group: ""
+    resources: ["users", "groups", "serviceaccounts"]
+
+# Log certificate signing requests
+- level: RequestResponse
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: certificates.k8s.io
+    resources: ["certificatesigningrequests"]
+
+# Log network policy modifications
+- level: Metadata
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: networking.k8s.io
+    resources: ["networkpolicies"]
+
+# Log policy modifications
+- level: Metadata
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: policy
+    resources: ["podsecuritypolicies"]
+
+# Log custom resources at metadata level
+- level: Metadata
+  verbs: ["create", "update", "patch", "delete"]
+  resources:
+  - group: "*"
+    resources: ["*"]
+
+# Log all requests at the Metadata level
+- level: Metadata

@@ -1,0 +1,419 @@
+{
+  "timestamp": "2025-12-27T23:55:56.355892",
+  "phase": "Phase 3: Test Execution",
+  "test_results": [
+    {
+      "test": "test_advanced_chaos_and_healing",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_agentic_ai_part1",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_agentic_ai_part2",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_api_design_integration",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_autonomous_systems_part1",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_autonomous_systems_part2",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_chaos_and_stability",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_chaos_standalone",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_cli",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_cloud_services",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_complex_environments",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_concurrency_threading",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_configuration_deployment",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_core",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_critic",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_data_processing",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_database_operations",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_distributed_chaos_consensus",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_distributed_systems_part1",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_distributed_systems_part2",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_edge_cases_boundaries",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_edge_cases_comprehensive",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_end_to_end",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_error_handling_recovery",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_error_injection_recovery",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_error_recovery",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_error_recovery_integration",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_extended_chaos",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_final_critical_edge_cases",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_health_checks",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_integration_and_performance",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_llm_integration_part1",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_llm_integration_part2",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_message_queues_events",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_module_integration",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_monitoring_observability",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_multimodal_ai_part1",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_multimodal_ai_part2",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_networking_protocols",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_observability",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_observability_integration",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_observer",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_orchestrator",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_performance",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_performance_optimization",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_production_chaos_and_recovery",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_programmer",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_rag_vector_db_part1",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_rag_vector_db_part2",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_real_world_scenarios",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_resource_management",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_security_privacy",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_stress_chaos",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_system_integration_deployment",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_testing_qa",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_tier4_enhancements",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_tier_integration",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    },
+    {
+      "test": "test_validator",
+      "status": "FAIL",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "T_contra = TypeVar(\"T_contra\", contravariant=True, default=None)\n               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: typevar() got an unexpected keyword argument 'default'\n"
+    }
+  ],
+  "summary": {
+    "total_tests": 58,
+    "passed": 0,
+    "failed": 58,
+    "errors": 0,
+    "skipped": 0
+  }
+}

@@ -1,0 +1,199 @@
+# ============================================================================
+# PROJECT PHOENIX - COMPLETE TECH STACK REQUIREMENTS
+# Strict adherence to specified technology versions
+# Updated: December 28, 2025
+# ============================================================================
+
+# BACKEND FRAMEWORK - FastAPI Stack (REQUIRED)
+# ===========================================================================
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-multipart==0.0.6
+
+# DATABASE LAYER (REQUIRED)
+# ===========================================================================
+# PostgreSQL (Primary Database - Production Ready, Free, Open-Source)
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.25
+alembic==1.13.1
+
+# Redis (Caching & Sessions)
+redis==5.0.1
+hiredis==2.2.3
+
+# MongoDB (Unstructured Data)
+pymongo==4.6.0
+motor==3.3.2
+
+# Vector Database Support
+pinecone-client==2.2.2
+chromadb==0.4.18
+langchain==0.1.4
+
+# DATABASE MIGRATION & ORM
+sqlalchemy-utils==0.41.1
+
+# AI/ML STACK (REQUIRED)
+# ===========================================================================
+# Deep Learning Frameworks
+torch==2.1.1
+tensorflow==2.14.1
+torchvision==0.16.1
+torchaudio==2.1.1
+
+# LLM & Transformers
+transformers==4.35.2
+huggingface-hub==0.19.4
+sentence-transformers==2.2.2
+
+# LLM Orchestration & Integration
+openai==1.10.0
+anthropic==0.8.1
+langchain==0.1.4
+langchain-openai==0.0.6
+langchain-anthropic==0.1.5
+
+# Embeddings & Vector Operations
+faiss-cpu==1.7.4
+numpy==1.26.2
+scipy==1.11.4
+
+# NLP & Text Processing
+nltk==3.8.1
+spacy==3.7.2
+textblob==0.17.1
+
+# ML Ops & Experiment Tracking
+mlflow==2.10.0
+wandb==0.16.3
+optuna==3.14.0
+
+# Data Processing & Analytics
+pandas==2.1.3
+polars==0.19.11
+dask==2023.12.1
+
+# ML Pipeline Orchestration
+apache-airflow==2.7.3
+prefect==2.14.8
+
+# AUTHENTICATION & SECURITY (REQUIRED)
+# ===========================================================================
+pyjwt==2.8.1
+python-jose==3.3.0
+passlib==1.7.4
+bcrypt==4.1.1
+cryptography==41.0.7
+python-dotenv==1.0.1
+
+# OAuth 2.0 Support
+authlib==1.2.1
+requests-oauthlib==1.3.0
+
+# ASYNC & CONCURRENCY
+# ===========================================================================
+asyncio==3.4.3
+aiohttp==3.9.1
+aiofiles==23.2.1
+aiokafka==0.10.0
+
+# CELERY for async task processing
+celery==5.3.4
+kombu==5.3.4
+
+# MONITORING, LOGGING & OBSERVABILITY (REQUIRED)
+# ===========================================================================
+# Prometheus Metrics
+prometheus-client==0.19.0
+
+# Logging
+python-json-logger==2.0.7
+structlog==24.1.0
+loguru==0.7.2
+
+# Distributed Tracing
+opentelemetry-api==1.21.0
+opentelemetry-sdk==1.21.0
+opentelemetry-instrumentation-fastapi==0.42b0
+opentelemetry-exporter-jaeger==1.21.0
+jaeger-client==4.8.0
+
+# Health Checks
+aioredis==2.0.1
+
+# API UTILITIES
+# ===========================================================================
+httpx==0.26.0
+requests==2.31.0
+pyyaml==6.0.1
+jinja2==3.1.3
+
+# CODE ANALYSIS & MANIPULATION
+# ===========================================================================
+libcst==1.1.0
+rope==1.11.0
+ast-grep==0.15.0
+ast-monitor==0.2.0
+
+# GIT INTEGRATION
+# ===========================================================================
+gitpython==3.1.41
+
+# TESTING SUITE (REQUIRED)
+# ===========================================================================
+pytest==7.4.4
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-xdist==3.5.0
+pytest-timeout==2.2.0
+coverage==7.4.1
+faker==21.0.0
+
+# DOCKER & CONTAINERIZATION
+# ===========================================================================
+docker==7.0.0
+python-docker==0.0.2
+
+# DEVELOPMENT & CODE QUALITY
+# ===========================================================================
+black==23.12.0
+flake8==6.1.0
+isort==5.13.2
+mypy==1.7.1
+pylint==3.0.3
+autopep8==2.0.4
+
+# UTILITIES & HELPERS
+# ===========================================================================
+pydantic-core==2.14.2
+typing-extensions==4.9.0
+tenacity==8.2.3
+decorator==5.1.1
+click==8.1.7
+
+# GRAPHQL (Optional but recommended)
+# ===========================================================================
+strawberry-graphql==0.219.1
+graphene==3.3
+
+# RATE LIMITING & THROTTLING
+# ===========================================================================
+slowapi==0.1.9
+
+# CORS HANDLING
+# ===========================================================================
+fastapi-cors==0.0.6
+
+# ============================================================================
+# NOTES:
+# - All versions are pinned for reproducibility
+# - Python 3.11+ required
+# - GPU support requires CUDA 12.1 compatible drivers
+# - Some packages may require system dependencies
+# ============================================================================
+
+# Utilities
+python-dotenv==1.0.0
+click==8.1.7

@@ -1,0 +1,119 @@
+# Promtail Configuration
+# Log collection agent that ships logs to Loki
+# Version: 1.0.0
+# Updated: December 28, 2025
+
+---
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    batchwait: 1s
+    batchsize: 1048576  # 1MB
+    max_retries: 3
+    backoff_config:
+      min_period: 100ms
+      max_period: 10s
+      max_retries: 20
+    timeout: 10s
+    tenant_id: ''
+
+# Positions file
+positions:
+  filename: /tmp/positions.yaml
+  sync_period: 10s
+  sync_on_shutdown: true
+
+# Scrape configuration
+scrape_configs:
+  # Kubernetes pod logs
+  - job_name: kubernetes-pods
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - phoenix
+            - kube-system
+            - loki
+            - monitoring
+    relabel_configs:
+      # Extract namespace label
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: namespace
+      
+      # Extract pod name
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: pod
+      
+      # Extract node name
+      - source_labels: [__meta_kubernetes_node_name]
+        action: replace
+        target_label: node
+      
+      # Extract pod labels
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      
+      # Extract container name
+      - source_labels: [__meta_kubernetes_pod_container_name]
+        action: replace
+        target_label: container
+      
+      # Extract pod UID
+      - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+        action: replace
+        separator: /
+        target_label: __path__
+        replacement: /var/log/pods/*${1}/*.log
+      
+      # Extract pod annotation labels
+      - action: labelmap
+        regex: __meta_kubernetes_pod_annotation_(.+)
+        replacement: pod_annotation_$1
+      
+      # Skip Loki internal logs
+      - source_labels: [__meta_kubernetes_pod_name]
+        regex: '(loki|promtail)'
+        action: drop
+
+  # Host logs
+  - job_name: host-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: host-logs
+          __path__: /var/log/{*.log,**/*.log}
+
+  # Syslog (if available)
+  - job_name: syslog
+    syslog_sd_configs:
+      - listen_address: 0.0.0.0:1514
+    relabel_configs:
+      - source_labels: [__syslog_message_hostname]
+        target_label: host
+      - source_labels: [__syslog_message_app_name]
+        target_label: app
+
+# Target limits
+limits_config:
+  readline_rate_enabled: true
+  readline_rate: 10000
+  readline_burst: 15000
+
+# Server configuration
+server:
+  http_listen_port: 3101
+  grpc_listen_port: 0
+  log_level: info
+  log_format: json
+
+# Tracing configuration
+tracing:
+  enabled: false
+
+# Metrics configuration
+metrics:
+  enabled: true
+  server:
+    http_listen_port: 3101

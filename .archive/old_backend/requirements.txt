@@ -1,0 +1,188 @@
+# Project Phoenix - Python Backend Requirements
+# Complete AI/ML Stack with Production-Grade Dependencies
+
+# Core Framework & Web
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+starlette==0.27.0
+python-multipart==0.0.6
+
+# GraphQL Integration
+graphene==3.3
+strawberry-graphql[fastapi]==0.218.1
+graphql-core==3.2.3
+
+# Database & ORM
+sqlalchemy==2.0.23
+alembic==1.12.1
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+pymongo==4.6.0
+motor==3.3.2
+
+# Redis & Caching
+redis==5.0.1
+aioredis==2.0.1
+
+# Vector Database
+pinecone-client==2.2.4
+chromadb==0.4.22
+
+# HTTP Client
+httpx==0.25.1
+aiohttp==3.9.1
+requests==2.31.0
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+pydantic==2.5.0
+pydantic-settings==2.1.0
+cryptography==41.0.7
+PyJWT==2.8.1
+
+# Deep Learning & NLP
+torch==2.1.1
+torchvision==0.16.1
+torchaudio==2.1.1
+tensorflow==2.14.1
+transformers==4.35.2
+sentence-transformers==2.2.2
+accelerate==0.25.0
+bitsandbytes==0.41.2
+
+# Large Language Models
+openai==1.3.6
+anthropic==0.7.9
+cohere==4.37
+
+# LLM Framework & Orchestration
+langchain==0.1.5
+langchain-openai==0.0.5
+langchain-anthropic==0.0.6
+langsmith==0.0.69
+
+# ML Operations & Tracking
+mlflow==2.10.2
+optuna==3.14.1
+ray[tune]==2.8.2
+
+# Workflow Orchestration
+apache-airflow==2.7.3
+apache-airflow-providers-docker==3.8.0
+apache-airflow-providers-postgres==5.10.0
+apache-airflow-providers-http==4.7.1
+
+# Data Processing & Analysis
+numpy==1.26.3
+pandas==2.1.3
+scipy==1.11.4
+scikit-learn==1.3.2
+polars==0.19.15
+
+# Task Queue & Background Jobs
+celery==5.3.4
+kombu==5.3.4
+
+# Logging & Monitoring
+python-json-logger==2.0.7
+structlog==23.2.0
+opentelemetry-api==1.21.0
+opentelemetry-sdk==1.21.0
+opentelemetry-instrumentation-fastapi==0.42b0
+opentelemetry-exporter-prometheus==0.42b0
+opentelemetry-exporter-jaeger==1.21.0
+prometheus-client==0.19.0
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-xdist==3.5.0
+httpx[testing]==0.25.1
+factory-boy==3.3.0
+faker==21.0.0
+
+# Code Quality
+black==23.12.0
+isort==5.13.2
+flake8==6.1.0
+pylint==3.0.3
+mypy==1.7.1
+ruff==0.1.8
+
+# Environment & Config
+python-dotenv==1.0.0
+pydantic-dotenv==0.1.0
+
+# Utilities
+pyyaml==6.0.1
+click==8.1.7
+typer==0.9.0
+rich==13.7.0
+python-dateutil==2.8.2
+pytz==2023.3.post1
+attrs==23.2.0
+tenacity==8.2.3
+tqdm==4.66.1
+more-itertools==10.1.0
+
+# API Documentation
+mkdocs==1.5.3
+mkdocs-material==9.5.3
+
+# Development
+ipython==8.18.1
+ipdb==0.13.13
+jupyter==1.0.0
+
+# ASGI Server
+gunicorn==21.2.0
+nginx==1.25.3
+
+# Version Management
+setuptools==69.0.2
+wheel==0.42.0
+twine==4.0.2
+
+# Process Management (for local development)
+python-daemon==2.3.2
+watchdog==3.0.0
+
+# Optional but Recommended
+# For advanced vector operations
+faiss-cpu==1.7.4
+
+# For model compression
+onnx==1.15.0
+onnxruntime==1.17.1
+
+# For distributed computing
+dask==2023.12.0
+distributed==2023.12.0
+
+# For database migration tools
+sqlparse==0.4.4
+psycopg2==2.9.9
+
+# For YAML validation
+yamllint==1.32.0
+
+# For HTTP caching
+cachetools==5.3.2
+
+# For async operations
+asyncio-contextmanager==1.0.0
+aio-pika==9.2.3
+
+# Database drivers
+motor==3.3.2  # MongoDB async
+asyncpg==0.29.0  # PostgreSQL async
+
+# Performance optimization
+ujson==5.9.0
+orjson==3.9.10
+
+# For email handling
+python-multipart==0.0.6
+python-email-validator==2.0.0

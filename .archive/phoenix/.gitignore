@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Environment variables
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Data
+data/
+workspaces/
+sandboxes/
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (for Angular frontend)
+node_modules/
+ui/dist/
+ui/.angular/
+
+# Temporary
+tmp/
+temp/
+*.tmp

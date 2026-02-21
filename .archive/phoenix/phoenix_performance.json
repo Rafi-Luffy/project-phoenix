@@ -1,0 +1,20 @@
+{
+  "generated": "2025-12-27T09:20:33.298309",
+  "agents": {
+    "test_agent": {
+      "snapshots": [
+        {
+          "timestamp": "2025-12-27T09:20:33.298276",
+          "agent_name": "test_agent",
+          "execution_time_ms": 100,
+          "success_count": 10,
+          "failure_count": 1,
+          "success_rate": 90.9090909090909,
+          "error_frequency": 0.1,
+          "avg_recovery_time_ms": 50,
+          "memory_usage_mb": 100
+        }
+      ]
+    }
+  }
+}

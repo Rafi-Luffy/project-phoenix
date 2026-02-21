@@ -1,0 +1,3797 @@
+{
+  "timestamp": "2025-12-28T00:22:02.808024",
+  "total_tests": 923,
+  "passed": 923,
+  "failed": 0,
+  "errors": 23,
+  "skipped": 0,
+  "test_details": [
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_async_callback_ordering",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_broadcast_storm",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_heartbeat_timeout_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_message_duplication",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_message_ordering_violation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_message_serialization_error",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_message_size_limit_exceeded",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_partial_message_delivery",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_protocol_version_mismatch",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestAgentCommunicationProtocols::test_request_response_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_boom_bust_cycles",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_clustering_imbalance",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_congestion_collapse",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_consensus_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_deadlock_cycles",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_herding_behavior",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_information_cascade",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_oscillation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_phase_transition",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestEmergentBehaviors::test_emergent_spatial_segregation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_byzantine_fault_tolerance",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_cascading_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_deadlock_circular_dependency",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_livelock_mutual_deference",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_message_queue_overflow",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_priority_inversion",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_race_condition_shared_state",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_resource_leak_incomplete_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_split_brain_consensus",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part1::TestMultiAgentCoordination::test_agent_starvation_unfair_scheduling",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_agent_discovery_stale_registry",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_bulkhead_resource_isolation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_circuit_breaker_state_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_compensating_transaction_ordering",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_coordination_protocol_deadlock",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_dynamic_workflow_modification",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_event_ordering_guarantee",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_orchestrator_single_point_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_saga_pattern_compensation_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestAgentOrchestration::test_workflow_state_inconsistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_contingency_plan_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_goal_conflict_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_interleaved_planning_execution",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_partial_order_planning_inconsistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_plan_decomposition_infinite_recursion",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_plan_optimization_local_minima",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_plan_repair_loop",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_plan_validity_check_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_resource_constraint_violation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestHierarchicalPlanning::test_temporal_constraint_violation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_delegation_context_loss",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_delegation_cycle_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_delegation_timeout_propagation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_dependency_aware_delegation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_load_balancing_unfairness",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_partial_failure_rollback",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_priority_queue_starvation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_skill_mismatch_delegation",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_task_assignment_overload",
+      "status": "passed"
+    },
+    {
+      "test": "test_agentic_ai_part2::TestTaskDelegation::test_work_stealing_race_condition",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_api_credential_rotation",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_api_quota_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_api_response_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_bulk_api_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_integration_circuit_breaker",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_integration_data_mapping",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_integration_fallback_strategy",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_integration_monitoring",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_integration_versioning",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestExternalIntegrations::test_third_party_api_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_api_versioning",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_content_negotiation",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_cors_configuration",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_error_response_format",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_etag_caching",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_http_method_semantics",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_idempotency_requirement",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_pagination_headers",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_proper_status_codes",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestRESTAPIDesign::test_rate_limit_headers",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_callback_url_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_dead_letter_queue",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_event_ordering",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_idempotency_key",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_payload_size_limit",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_retry_logic",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_signature_verification",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_subscription_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_timeout_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_api_design_integration::TestWebhooksAndCallbacks::test_webhook_timestamp_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_action_space_pruning",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_decision_tree_depth_limit",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_exploration_exploitation_balance",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_multi_objective_decision_conflict",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_non_stationary_environment_adaptation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_reward_signal_sparsity",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_risk_aware_decision_making",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_state_abstraction_granularity",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_temporal_credit_assignment",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestAutonomousDecisionMaking::test_uncertainty_quantification_decisions",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_goal_abandonment_criteria",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_goal_conflict_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_goal_context_switching_cost",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_goal_interleaving_efficiency",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_goal_precondition_checking",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_goal_priority_updates",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_goal_utility_decay",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_opportunistic_goal_achievement",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_subgoal_decomposition_completeness",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestGoalManagement::test_temporal_goal_constraints",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_capability_self_assessment",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_configuration_drift_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_failure_pattern_recognition",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_feature_importance_adaptation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_hyperparameter_auto_tuning",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_meta_learning_adaptation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_model_retraining_triggers",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_performance_degradation_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_resource_usage_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part1::TestSelfAdaptation::test_strategy_switching_triggers",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_associative_memory_retrieval",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_context_dependent_memory",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_episodic_memory_consolidation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_memory_compression",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_memory_consistency_updates",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_memory_decay_forgetting",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_memory_prioritization",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_memory_source_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_semantic_memory_inference",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestMemorySystems::test_working_memory_capacity",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_action_affordance_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_action_execution_monitoring",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_action_feedback_loop",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_action_safety_constraints",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_action_smoothness_constraints",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_perception_action_timing_coordination",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_perception_latency_compensation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_perception_uncertainty_propagation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_reactive_vs_deliberative_balance",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestPerceptionAction::test_sensor_fusion_multimodal",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_parallel_tool_execution",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_dependency_resolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_error_propagation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_output_streaming",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_parameter_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_quota_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_result_caching",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_result_type_coercion",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_retry_logic",
+      "status": "passed"
+    },
+    {
+      "test": "test_autonomous_systems_part2::TestToolCalling::test_tool_timeout_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestAdaptiveRetry::test_adaptive_strategy",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestChaosScenario1CascadingFailureDetection::test_cascading_failure_with_fallback",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestCircuitBreaker::test_circuit_breaker",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestConsistency::test_state_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestDeadlockPrevention::test_deadlock_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestErrorDetection::test_memory_pressure_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestErrorIsolation::test_error_isolation",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestNetworkPartition::test_quorum_partition",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestPartialFailures::test_partial_failure_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_chaos_standalone::TestRecoveryValidation::test_full_recovery_cycle",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_iam_overly_permissive",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_no_cloudtrail",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_no_encryption_at_rest",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_no_encryption_in_transit",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_no_mfa_for_root",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_no_vpc_flow_logs",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_rds_public_subnet",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_s3_bucket_public",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_secrets_in_environment_variables",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudSecurity::test_security_group_too_permissive",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_cloudwatch_no_structured_logging",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_dynamodb_hot_partition",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_ec2_no_autoscaling",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_ecs_no_health_checks",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_lambda_cold_start",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_lambda_no_connection_pooling",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_s3_no_lifecycle_policy",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_s3_no_multipart_upload",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_sns_no_message_attributes",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestCloudStorageAndCompute::test_sqs_no_visibility_extension",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_api_gateway_no_throttling",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_azure_functions_no_durable",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_cloud_run_no_concurrency_limit",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_container_no_health_endpoint",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_dockerfile_no_layer_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_fargate_no_resource_limits",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_kubernetes_no_resource_requests",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_lambda_memory_inefficient",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_lambda_timeout_too_short",
+      "status": "passed"
+    },
+    {
+      "test": "test_cloud_services::TestServerlessAndContainers::test_step_functions_no_error_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_async_context_managers",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_async_generator_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_async_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_blocking_in_async",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_event_loop_blocking",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_event_loop_policy",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_fire_and_forget",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_gather_error_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_semaphore_usage",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestAsyncPatterns::test_task_cancellation",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_deadlock_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_livelock_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_lock_free_algorithms",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_lock_ordering",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_lock_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_nested_locks",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_priority_inversion",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_recursive_locks",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_resource_allocation_graph",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestDeadlocksAndLivelocks::test_starvation_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_atomic_operations",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_compare_and_swap",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_concurrent_collections",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_copy_on_write",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_double_checked_locking",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_immutable_objects",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_read_write_locks",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_shared_mutable_state",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_thread_local_storage",
+      "status": "passed"
+    },
+    {
+      "test": "test_concurrency_threading::TestThreadSafety::test_volatile_visibility",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_config_defaults",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_config_file_format",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_config_hot_reload",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_config_immutability",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_config_precedence",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_config_schema_versioning",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_config_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_environment_specific_config",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_hardcoded_configuration",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestConfigurationManagement::test_sensitive_config_logging",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_canary_deployment",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_database_migration_strategy",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_deployment_notifications",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_deployment_smoke_tests",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_environment_parity",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_feature_flags",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_graceful_shutdown",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_health_check_endpoint",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_rollback_mechanism",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestDeploymentPatterns::test_zero_downtime_deployment",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_default_credentials",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secret_access_logging",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secret_encryption_at_rest",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secret_expiration",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secret_injection",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secret_rotation",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secret_scope",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secrets_in_environment_variables",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secrets_in_logs",
+      "status": "passed"
+    },
+    {
+      "test": "test_configuration_deployment::TestSecretsManagement::test_secrets_in_source_code",
+      "status": "passed"
+    },
+    {
+      "test": "test_core::TestCoreModels::test_diagnostic_report_creation",
+      "status": "passed"
+    },
+    {
+      "test": "test_core::TestCoreModels::test_failure_event_creation",
+      "status": "passed"
+    },
+    {
+      "test": "test_core::TestCoreModels::test_patch_creation",
+      "status": "passed"
+    },
+    {
+      "test": "test_core::TestCoreModels::test_project_creation",
+      "status": "passed"
+    },
+    {
+      "test": "test_core::TestCoreModels::test_validation_result_creation",
+      "status": "passed"
+    },
+    {
+      "test": "test_core::TestSettings::test_settings_custom",
+      "status": "passed"
+    },
+    {
+      "test": "test_core::TestSettings::test_settings_defaults",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_cross_field_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_data_accuracy_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_data_completeness_check",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_data_consistency_check",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_data_profiling",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_data_range_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_data_sanitization",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_data_uniqueness_constraint",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_outlier_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestDataQuality::test_referential_integrity",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_data_freshness_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_data_lineage_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_data_transformation_error_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_data_type_coercion",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_duplicate_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_etl_checkpoint_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_etl_transaction_boundary",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_incremental_extraction",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_null_value_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestETLPipelines::test_schema_evolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_backpressure_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_event_deduplication",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_event_ordering_guarantee",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_exactly_once_semantics",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_late_event_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_state_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_stream_aggregation_accuracy",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_stream_join_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_stream_partitioning",
+      "status": "passed"
+    },
+    {
+      "test": "test_data_processing::TestStreamProcessing::test_watermark_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_cassandra_no_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_cosmosdb_no_partition_key",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_couchdb_no_views",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_dynamodb_no_pagination",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_elasticsearch_no_refresh",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_firestore_no_batching",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_memcached_no_key_length_check",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_mongodb_no_indexes",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_neo4j_no_params",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestNoSQLOperations::test_redis_no_expiration",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_bulk_insert_inefficiency",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_connection_not_closed",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_connection_pooling",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_deadlock_no_retry",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_missing_indexes",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_n_plus_one_queries",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_select_star",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_slow_query_no_limit",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_sql_injection",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestSQLOperations::test_transaction_not_committed",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_blocking_schema_change",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_cascade_delete",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_data_migration_in_schema",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_dirty_read",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_lost_update",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_migration_no_rollback",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_migration_no_transaction",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_optimistic_locking",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_phantom_reads",
+      "status": "passed"
+    },
+    {
+      "test": "test_database_operations::TestTransactionsAndMigrations::test_schema_version_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestDistributedConsensusFailures::test_leader_election_with_multiple_failures",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestDistributedConsensusFailures::test_split_brain_detection_and_resolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestDistributedLockFailures::test_distributed_lock_deadlock_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestDistributedLockFailures::test_lock_holder_death_with_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestStateConsistencyAndRepair::test_multi_region_failover_with_data_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestStateConsistencyAndRepair::test_state_divergence_detection_and_reconciliation",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestTwoPhaseCommitFailures::test_2pc_with_cascading_failures",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_chaos_consensus::TestTwoPhaseCommitFailures::test_coordinator_failure_during_commit",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_consensus_with_byzantine_nodes",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_epoch_number_monotonicity",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_log_replication_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_paxos_prepare_phase",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_raft_leader_election",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_read_write_quorum_overlap",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_snapshot_and_log_compaction",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_split_brain_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_two_phase_commit_coordinator_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestConsensusAlgorithms::test_view_change_protocol",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_backpressure_distributed",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_circuit_breaker_pattern",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_exactly_once_semantics",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_gossip_protocol_convergence",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_message_deduplication",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_message_ordering_guarantees",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_network_partition_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_rate_limiting_distributed",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_request_timeout_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCommunication::test_retry_with_exponential_backoff",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_causal_ordering_events",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_distributed_barrier_synchronization",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_distributed_lock_acquisition",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_distributed_semaphore",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_distributed_snapshot_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_distributed_transaction_coordination",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_leader_lease_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_lock_expiration_and_renewal",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_vector_clock_synchronization",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part1::TestDistributedCoordination::test_work_stealing_queue",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_async_replication_durability",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_chain_replication_ordering",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_cross_datacenter_replication",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_eventual_consistency_convergence",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_master_slave_replication_lag",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_multi_master_conflict_resolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_quorum_read_write_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_read_your_writes_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_replica_failure_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestDataReplication::test_write_amplification_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_automatic_failover",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_bulkhead_isolation",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_cascading_failure_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_chaos_engineering_testing",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_data_corruption_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_disaster_recovery_plan",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_graceful_degradation",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_health_check_implementation",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_partial_failure_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestFaultTolerance::test_self_healing_mechanisms",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_consistent_hashing_rebalancing",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_cross_shard_transactions",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_hash_based_sharding_distribution",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_range_based_sharding_hotspots",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_secondary_index_partitioning",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_shard_key_selection",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_shard_metadata_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_shard_size_balancing",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_shard_splitting_online",
+      "status": "passed"
+    },
+    {
+      "test": "test_distributed_systems_part2::TestShardingAndPartitioning::test_virtual_shards_mapping",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_csv_file",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_dataframe",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_dictionary_pop",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_file_read",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_json_array",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_list_indexing",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_queue_get",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_reduce",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_set_operations",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestEmptyCollections::test_empty_string_split",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_default_mutable_argument",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_division_by_zero",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_empty_string_vs_none",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_json_null_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_missing_dictionary_key",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_none_in_list_comprehension",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_none_reference",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_null_in_comparison",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_null_propagation",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNullAndUndefined::test_optional_chaining",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_array_index_boundary",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_float_precision",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_infinity_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_integer_overflow",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_modulo_negative",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_nan_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_negative_zero",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_percentage_calculation",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_string_index_unicode",
+      "status": "passed"
+    },
+    {
+      "test": "test_edge_cases_boundaries::TestNumericBoundaries::test_timestamp_boundaries",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_async_exception_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_custom_exception_hierarchy",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_error_message_quality",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_error_recovery_state_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_exception_context_preservation",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_exception_in_exception_handler",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_exception_serialization",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_resource_cleanup_finally",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_silent_exception_swallowing",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestExceptionHandling::test_specific_exception_catching",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_cascading_recovery_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_checkpoint_and_resume",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_crash_recovery_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_dead_letter_queue",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_dependency_health_checking",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_partial_recovery_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_progressive_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_recovery_time_objective",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_transaction_rollback",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRecoveryStrategies::test_warm_vs_cold_restart",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_circuit_breaker_integration",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_exponential_backoff_implementation",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_graceful_degradation_on_retries",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_idempotency_for_retries",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_jitter_in_retry_delay",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_max_retry_limit",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_retry_budget_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_retry_metadata_logging",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_retry_on_specific_errors",
+      "status": "passed"
+    },
+    {
+      "test": "test_error_handling_recovery::TestRetryLogic::test_timeout_on_retries",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestByzantineFailures::test_byzantine_equivocation_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestByzantineFailures::test_byzantine_node_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestByzantineFailures::test_byzantine_resistance_2f_plus_1",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestCacheFailures::test_cache_invalidation_storm",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestCacheFailures::test_cache_poisoning_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestCacheFailures::test_cache_stampede",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestDataCorruption::test_corruption_containment",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestDataCorruption::test_corruption_detection_via_checksums",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestDataCorruption::test_corruption_recovery_via_replicas",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestMonitoringRecovery::test_metric_anomaly_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestMonitoringRecovery::test_self_healing_via_restart",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestRateLimiting::test_rate_limit_quota_exhaustion",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestTimeoutStorms::test_timeout_cascading_through_layers",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestTimeoutStorms::test_timeout_jitter_prevents_storms",
+      "status": "passed"
+    },
+    {
+      "test": "test_extended_chaos::TestTimeoutStorms::test_timeout_prevention_via_shedding",
+      "status": "passed"
+    },
+    {
+      "test": "test_final_critical_edge_cases::TestFinalCriticalEdgeCases::test_backward_compatibility",
+      "status": "passed"
+    },
+    {
+      "test": "test_final_critical_edge_cases::TestFinalCriticalEdgeCases::test_cascading_failure_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_final_critical_edge_cases::TestFinalCriticalEdgeCases::test_data_consistency_across_replicas",
+      "status": "passed"
+    },
+    {
+      "test": "test_final_critical_edge_cases::TestFinalCriticalEdgeCases::test_graceful_degradation",
+      "status": "passed"
+    },
+    {
+      "test": "test_final_critical_edge_cases::TestFinalCriticalEdgeCases::test_production_data_edge_cases",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_context_caching_staleness",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_context_injection_vulnerability",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_context_memory_leak",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_context_window_overflow",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_conversation_branching_context_confusion",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_memory_summarization_information_loss",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_message_history_truncation_loss",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_multimodal_context_imbalance",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_sliding_window_context_loss",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestContextManagement::test_token_counting_inaccuracy",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_api_key_rotation_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_api_timeout_no_fallback",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_api_version_deprecation",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_concurrent_api_calls_race",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_json_parsing_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_network_error_retry_storm",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_partial_response_streaming",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_rate_limit_no_backoff",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_response_validation_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestLLMAPIErrors::test_token_limit_exceeded",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_chain_of_thought_prompt_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_dynamic_prompt_construction_sql_injection",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_few_shot_example_selection_bias",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_instruction_following_degradation",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_prompt_formatting_inconsistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_prompt_injection_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_prompt_length_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_role_assignment_confusion",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_system_prompt_override_vulnerability",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part1::TestPromptEngineering::test_template_variable_escaping",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_call_ambiguity",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_chaining_error_propagation",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_discovery_stale_schema",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_parameter_coercion",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_result_type_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_side_effects_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_signature_mismatch",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_function_timeout_enforcement",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_parallel_function_execution_race",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestFunctionCalling::test_recursive_function_calls",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_code_injection_in_generated_code",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_hallucination_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_language_mixing_in_output",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_markdown_formatting_inconsistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_output_confidence_calibration",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_output_determinism_variance",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_output_length_constraint_violation",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_pii_leakage_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_response_consistency_checking",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestOutputValidation::test_toxic_content_filtering",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_additional_properties_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_array_length_constraints",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_circular_reference_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_enum_value_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_format_validation_email_url",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_json_schema_validation_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_nested_structure_parsing_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_numeric_range_constraints",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_required_field_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_llm_integration_part2::TestStructuredOutputs::test_union_type_disambiguation",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_compaction",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_correlation_id",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_deduplication",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_filtering",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_replay",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_schema_evolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_sourcing_snapshots",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_event_versioning",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_outbox_pattern",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventProcessing::test_saga_compensation",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_event_hub_checkpoint",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kafka_batch_size",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kafka_compression",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kafka_idempotent_producer",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kafka_max_poll_records",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kafka_no_consumer_group",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kafka_no_offset_commit",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kafka_partition_assignment",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_kinesis_shard_iterator",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestEventStreaming::test_pub_sub_exactly_once",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_dead_letter_queue",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_duplicate_message_processing",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_message_batching",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_message_ordering",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_message_ttl",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_message_visibility_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_no_message_acknowledgment",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_poison_message_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_prefetch_count",
+      "status": "passed"
+    },
+    {
+      "test": "test_message_queues_events::TestMessageQueuePatterns::test_publisher_confirms",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_acknowledgment",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_context",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_escalation",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_fatigue",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_history",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_routing",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_runbooks",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_silencing",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_alert_thresholds",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestAlerting::test_composite_alerts",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_async_logging",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_correlation_ids",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_error_stack_traces",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_log_aggregation",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_log_context_information",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_log_levels",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_log_rotation",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_log_sampling",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_sensitive_data_in_logs",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestLoggingPractices::test_structured_logging",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_business_metrics",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_counter_vs_gauge",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_custom_metrics",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_error_rate_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_latency_percentiles",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_metric_aggregation_intervals",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_metric_cardinality",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_metric_labels",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_metrics_export_format",
+      "status": "passed"
+    },
+    {
+      "test": "test_monitoring_observability::TestMetricsAndMonitoring::test_resource_utilization_metrics",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_acoustic_feature_normalization",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_audio_emotion_recognition",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_audio_language_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_audio_punctuation_restoration",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_audio_quality_assessment",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_audio_segmentation_boundaries",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_audio_streaming_latency",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_audio_transcription_accuracy",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_background_noise_classification",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestAudioProcessing::test_speaker_diarization",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_audio_visual_synchronization",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_cross_modal_attention_weights",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_cross_modal_retrieval",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_modality_confidence_fusion",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_modality_contradiction_resolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_modality_missing_fallback",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_modality_specific_preprocessing",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_modality_translation_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_multimodal_embedding_space",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestCrossModalIntegration::test_temporal_cross_modal_alignment",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_image_caption_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_image_region_description",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_image_resolution_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_image_text_alignment",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_multimodal_attention_mechanism",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_ocr_text_extraction_layout",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_temporal_visual_understanding",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_visual_concept_compositionality",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_visual_grounding_accuracy",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part1::TestVisionLanguageModels::test_visual_question_answering_reasoning",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_3d_object_pose_estimation",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_3d_reconstruction_scale_ambiguity",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_depth_estimation_accuracy",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_mesh_simplification_quality",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_multiview_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_occlusion_reasoning_3d",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_point_cloud_processing",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_scene_graph_construction_3d",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_spatial_relationship_understanding",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::Test3DUnderstanding::test_stereo_correspondence_matching",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_adaptive_quality_scaling",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_buffer_overflow_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_cpu_affinity_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_frame_dropping_strategy",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_frame_rate_maintenance",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_jitter_reduction",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_latency_budget_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_priority_based_scheduling",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_processing_pipeline_backpressure",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestRealTimeProcessing::test_real_time_deadline_monitoring",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_action_recognition_temporal_window",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_frame_interpolation_smoothness",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_highlight_detection_video",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_motion_vector_estimation",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_object_tracking_occlusion",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_scene_boundary_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_temporal_consistency_frames",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_video_compression_artifact_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_video_stabilization",
+      "status": "passed"
+    },
+    {
+      "test": "test_multimodal_ai_part2::TestVideoProcessing::test_video_summarization_coherence",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_connection_reuse",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_cookie_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_gzip_compression",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_http2_support",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_http_method_override",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_redirect_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_request_headers",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_request_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_response_streaming",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestHTTPCommunication::test_ssl_verification",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_address_reuse",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_connection_backlog",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_dns_resolution",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_ipv6_support",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_partial_reads",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_socket_buffer_size",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_socket_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_tcp_fast_open",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_tcp_keepalive",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestTCPIPHandling::test_tcp_nodelay",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_authentication",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_backpressure",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_binary_frames",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_compression",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_graceful_close",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_message_size",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_ping_pong",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_protocol_version",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_rate_limiting",
+      "status": "passed"
+    },
+    {
+      "test": "test_networking_protocols::TestWebSocketsAndRealtime::test_websocket_reconnection",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_batch_processing_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_database_n_plus_one",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_index_usage_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_linear_search_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_n_squared_algorithm",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_pagination_implementation",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_parallel_processing_opportunity",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_repeated_computation",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_string_matching_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestAlgorithmEfficiency::test_unnecessary_sorting",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_cache_eviction_policy",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_cache_invalidation_strategy",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_cache_key_collision",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_cache_size_monitoring",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_cache_stampede_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_cache_ttl_implementation",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_cache_warming",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_distributed_cache_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_negative_caching",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestCachingStrategies::test_write_through_vs_write_back",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_circular_reference_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_copy_on_write_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_data_structure_choice",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_generator_vs_list_comprehension",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_lazy_loading_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_memory_leak_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_memory_mapped_files",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_object_pooling",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_reference_counting_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_performance_optimization::TestMemoryManagement::test_string_concatenation_efficiency",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestClockSkewAndTimingFailures::test_clock_skew_causes_cert_expiration",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestClockSkewAndTimingFailures::test_timeout_during_gc_pause",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestDeadlockAndContention::test_deadlock_detection_and_abort",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestMemoryPressureFailures::test_cache_eviction_triggers_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestMemoryPressureFailures::test_goroutine_leak_detection_and_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestNetworkPartitionScenarios::test_byzantine_replica_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestNetworkPartitionScenarios::test_network_partition_with_quorum_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestResourceExhaustion::test_connection_pool_exhaustion_with_recovery",
+      "status": "passed"
+    },
+    {
+      "test": "test_production_chaos_and_recovery::TestResourceExhaustion::test_memory_leak_in_cache_with_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_adaptive_chunk_size",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_chunk_metadata_enrichment",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_chunk_overlap_context_preservation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_code_aware_chunking",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_cross_reference_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_fixed_size_chunking_sentence_splitting",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_hierarchical_chunking_metadata",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_multimedia_content_chunking",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_semantic_chunking_coherence",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestChunkingStrategies::test_table_preservation_in_chunks",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_batch_embedding_memory_overflow",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_contextual_embedding_position_bias",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_cross_encoder_reranking_cost",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_embedding_cache_invalidation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_embedding_dimensionality_reduction",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_embedding_model_version_drift",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_embedding_normalization_missing",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_query_expansion_loop",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_sparse_dense_hybrid_encoding",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestEmbeddingGeneration::test_special_token_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_context_window_chunk_truncation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_duplicate_retrieval_results",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_embedding_dimension_mismatch",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_hybrid_search_weight_balancing",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_metadata_filtering_sql_injection",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_multilingual_retrieval_bias",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_retrieval_without_reranking",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_semantic_search_threshold_tuning",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_stale_index_retrieval",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part1::TestRAGRetrieval::test_temporal_relevance_decay",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_entity_disambiguation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_graph_cycle_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_graph_embedding_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_graph_pattern_matching",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_graph_schema_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_graph_vector_hybrid_retrieval",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_multi_hop_reasoning",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_relation_aware_retrieval",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_subgraph_extraction",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestKnowledgeGraphs::test_temporal_graph_queries",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_batch_search_optimization",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_early_termination_search",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_filtered_search_index_utilization",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_geo_spatial_filtering",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_multi_vector_query_fusion",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_negative_sampling_search",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_personalized_search_ranking",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_query_caching_invalidation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_search_explain_scores",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestSearchOptimization::test_search_result_diversity",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_approximate_nearest_neighbor_recall",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_concurrent_index_updates",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_dynamic_index_rebalancing",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_incremental_index_update_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_index_build_without_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_index_compression_quality_loss",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_index_corruption_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_index_memory_mapping",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_index_shard_balancing",
+      "status": "passed"
+    },
+    {
+      "test": "test_rag_vector_db_part2::TestVectorIndexing::test_index_versioning_rollback",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_connection_leak",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_connection_pooling",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_connection_retry",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_connection_state_reset",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_connection_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_graceful_shutdown",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_idle_timeout",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_max_lifetime",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_pool_exhaustion",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestConnectionManagement::test_pool_metrics",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_buffer_flushing",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_context_manager_usage",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_directory_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_file_descriptor_leak",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_file_locking",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_mmap_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_resource_limits",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_signal_handler_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_stream_closing",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestFileHandleManagement::test_temp_file_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_buffer_pooling",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_circular_references",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_closure_memory_leaks",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_event_listener_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_generator_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_global_collections",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_memory_profiling",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_object_pooling",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_string_concatenation",
+      "status": "passed"
+    },
+    {
+      "test": "test_resource_management::TestMemoryManagement::test_weak_references",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_account_lockout_policy",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_credential_storage",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_jwt_token_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_multifactor_authentication",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_oauth_state_parameter",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_password_hashing_strength",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_password_reset_security",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_rate_limiting_authentication",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_session_expiration",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthenticationSecurity::test_session_token_security",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_admin_action_auditing",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_api_authorization_enforcement",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_attribute_based_access_control",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_cross_tenant_isolation",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_least_privilege_principle",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_object_level_authorization",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_permission_caching_invalidation",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_privilege_escalation_prevention",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_resource_quota_enforcement",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestAuthorizationControls::test_role_based_access_control",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_consent_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_data_anonymization",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_data_at_rest_encryption",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_data_in_transit_encryption",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_differential_privacy",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_gdpr_right_to_erasure",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_key_rotation_policy",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_pii_detection_and_masking",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_secure_data_sharing",
+      "status": "passed"
+    },
+    {
+      "test": "test_security_privacy::TestEncryptionAndPrivacy::test_secure_random_generation",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_hardcoded_secrets",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_artifact_versioning",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_build_verification",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_canary_deployment",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_deployment_gates",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_deployment_logging",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_health_check_after_deploy",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_rollback_on_failure",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_smoke_tests",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestCICDPipeline::test_no_test_execution",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_config_in_code",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_dev_prod_parity",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_environment_specific_code",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_locale_dependencies",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_missing_environment_variables",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_no_config_hot_reload",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_no_configuration_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_no_environment_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_no_feature_flags",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestEnvironmentManagement::test_timezone_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_case_sensitive_filenames",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_circular_dependencies",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_executable_permissions",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_file_path_separators",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_line_ending_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_missing_dependency_check",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_platform_specific_code",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_resource_cleanup_on_signal",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_symlink_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_system_integration_deployment::TestSystemDependencies::test_version_pinning",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_mock_cleanup",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_mock_realistic_behavior",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_mock_return_values",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_mock_side_effects",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_mock_state_leakage",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_mock_verification",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_over_mocking",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_partial_mocking",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_spy_vs_mock",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestMockingAndStubbing::test_time_based_mocking",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_coverage_exclusions",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_coverage_in_ci",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_coverage_metrics",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_coverage_trends",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_critical_path_coverage",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_dead_code_detection",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_differential_coverage",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_integration_test_coverage",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_mutation_testing",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestTestCoverage::test_untested_error_paths",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_boundary_conditions",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_exception_testing",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_flaky_tests",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_parameterized_tests",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_proper_assertions",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_setup_teardown",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_test_data_management",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_test_documentation",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_test_independence",
+      "status": "passed"
+    },
+    {
+      "test": "test_testing_qa::TestUnitTestingPractices::test_test_naming_convention",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestEndToEndHealing::test_cascade_failure_scenario",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestEndToEndHealing::test_complete_healing_workflow",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestEndToEndHealing::test_multi_retry_scenario",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestEndToEndHealing::test_recovery_after_degradation",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestEndToEndHealing::test_simple_healing_scenario",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestErrorResilience::test_circuit_breaker_behavior",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestErrorResilience::test_configuration_validation",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestErrorResilience::test_failed_healing_cycle_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestErrorResilience::test_fallback_strategy",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestIntegrationSuite::test_all_tiers_working_together",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestModuleChain::test_apply_to_baseline_recording_chain",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestModuleChain::test_cache_to_generation_chain",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestModuleChain::test_generation_to_confidence_validation_chain",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestModuleChain::test_metrics_export_in_chain",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestModuleChain::test_slack_notification_in_chain",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestOrchestratorIntegration::test_orchestrator_cache_acceleration",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestOrchestratorIntegration::test_orchestrator_health_checks_pass",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestOrchestratorIntegration::test_orchestrator_initialization_with_config",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestOrchestratorIntegration::test_orchestrator_modules_enabled",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestOrchestratorIntegration::test_orchestrator_single_healing_cycle",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestOrchestratorIntegration::test_orchestrator_statistics_tracking",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestPerformanceMetrics::test_average_healing_time",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestPerformanceMetrics::test_cache_performance_impact",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestPerformanceMetrics::test_metrics_consistency",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestPerformanceMetrics::test_success_rate_calculation",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestSystemStress::test_concurrent_healing_cycles",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestSystemStress::test_high_failure_rate_handling",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestSystemStress::test_mixed_workload",
+      "status": "passed"
+    },
+    {
+      "test": "test_tier_integration::TestSystemStress::test_rapid_successive_calls",
+      "status": "passed"
+    }
+  ],
+  "failed_tests": [],
+  "error_tests": [
+    {
+      "test": "test_advanced_chaos_and_healing",
+      "error": "No module named 'phoenix.modules'"
+    },
+    {
+      "test": "test_chaos_and_stability",
+      "error": "No module named 'phoenix.testing'"
+    },
+    {
+      "test": "test_cli",
+      "error": "No module named 'phoenix.cli'"
+    },
+    {
+      "test": "test_complex_environments",
+      "error": "No module named 'phoenix.observer'"
+    },
+    {
+      "test": "test_critic",
+      "error": "No module named 'phoenix.critic'"
+    },
+    {
+      "test": "test_edge_cases_comprehensive",
+      "error": "No module named 'phoenix.modules'"
+    },
+    {
+      "test": "test_end_to_end",
+      "error": "No module named 'phoenix.observer'"
+    },
+    {
+      "test": "test_error_injection_recovery",
+      "error": "No module named 'phoenix.modules'"
+    },
+    {
+      "test": "test_error_recovery",
+      "error": "No module named 'phoenix.core.error_recovery'"
+    },
+    {
+      "test": "test_error_recovery_integration",
+      "error": "No module named 'phoenix.orchestrator'"
+    },
+    {
+      "test": "test_health_checks",
+      "error": "No module named 'phoenix.core.health_checker'"
+    },
+    {
+      "test": "test_integration_and_performance",
+      "error": "No module named 'phoenix.modules'"
+    },
+    {
+      "test": "test_module_integration",
+      "error": "No module named 'phoenix.orchestrator'"
+    },
+    {
+      "test": "test_observability",
+      "error": "cannot import name 'TracingService' from 'phoenix.core.observability' (/Users/rafi/Documents/Project"
+    },
+    {
+      "test": "test_observability_integration",
+      "error": "No module named 'phoenix.orchestrator'"
+    },
+    {
+      "test": "test_observer",
+      "error": "No module named 'phoenix.observer'"
+    },
+    {
+      "test": "test_orchestrator",
+      "error": "No module named 'phoenix.orchestrator'"
+    },
+    {
+      "test": "test_performance",
+      "error": "cannot import name 'AdvancedCacheManager' from 'phoenix.core.performance' (/Users/rafi/Documents/Pro"
+    },
+    {
+      "test": "test_programmer",
+      "error": "No module named 'phoenix.programmer'"
+    },
+    {
+      "test": "test_real_world_scenarios",
+      "error": "No module named 'phoenix.modules'"
+    },
+    {
+      "test": "test_stress_chaos",
+      "error": "No module named 'phoenix.observer'"
+    },
+    {
+      "test": "test_tier4_enhancements",
+      "error": "No module named 'phoenix.modules'"
+    },
+    {
+      "test": "test_validator",
+      "error": "No module named 'phoenix.validator'"
+    }
+  ]
+}

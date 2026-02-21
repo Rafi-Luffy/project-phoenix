@@ -1,0 +1,177 @@
+name: Deploy to AWS
+
+on:
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  TF_VERSION: latest
+  ENVIRONMENT: production
+
+jobs:
+  deploy-infrastructure:
+    name: Deploy AWS Infrastructure with Terraform
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ${{ env.TF_VERSION }}
+
+    - name: Terraform Init
+      run: |
+        cd terraform
+        terraform init \
+          -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+          -backend-config="key=phoenix/terraform.tfstate" \
+          -backend-config="region=${{ env.AWS_REGION }}"
+
+    - name: Terraform Plan
+      run: |
+        cd terraform
+        terraform plan \
+          -var-file="environments/prod.tfvars" \
+          -out=tfplan
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd terraform
+        terraform apply -auto-approve tfplan
+
+    - name: Export outputs
+      run: |
+        cd terraform
+        terraform output -json > outputs.json
+
+    - name: Upload outputs artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-outputs
+        path: terraform/outputs.json
+
+  deploy-kubernetes:
+    name: Deploy to Kubernetes Cluster
+    runs-on: ubuntu-latest
+    needs: [deploy-infrastructure]
+    if: success()
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig \
+          --name project-phoenix-cluster \
+          --region ${{ env.AWS_REGION }}
+
+    - name: Create namespace
+      run: |
+        kubectl create namespace phoenix --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Apply secrets
+      run: |
+        kubectl apply -f kubernetes/secrets.yaml
+
+    - name: Apply RBAC
+      run: |
+        kubectl apply -f kubernetes/rbac.yaml
+
+    - name: Apply ConfigMaps
+      run: |
+        kubectl apply -f kubernetes/configmap.yaml
+
+    - name: Deploy application
+      run: |
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/monitoring.yaml
+        kubectl apply -f kubernetes/ingress.yaml
+
+    - name: Wait for deployment
+      run: |
+        kubectl rollout status deployment/phoenix-api \
+          -n phoenix \
+          --timeout=5m
+
+    - name: Verify services
+      run: |
+        kubectl get all -n phoenix
+        kubectl get ingress -n phoenix
+
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    needs: [deploy-kubernetes]
+
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig \
+          --name project-phoenix-cluster \
+          --region ${{ env.AWS_REGION }}
+
+    - name: Check API health
+      run: |
+        # Get the load balancer endpoint
+        ENDPOINT=$(kubectl get svc -n phoenix phoenix-api -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+        echo "API Endpoint: $ENDPOINT"
+        
+        # Retry health check
+        for i in {1..30}; do
+          if curl -f http://$ENDPOINT/health; then
+            echo "API is healthy"
+            exit 0
+          fi
+          echo "Attempt $i failed, retrying..."
+          sleep 10
+        done
+        echo "API health check failed"
+        exit 1
+
+    - name: Slack notification
+      if: always()
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        payload: |
+          {
+            "text": "Project Phoenix Deployment",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*Deployment Status*: ${{ job.status }}\n*Commit*: ${{ github.sha }}\n*Environment*: ${{ env.ENVIRONMENT }}"
+                }
+              }
+            ]
+          }

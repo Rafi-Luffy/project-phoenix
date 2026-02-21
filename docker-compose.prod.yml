@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Free, Open-Source, Production-Ready)
+  postgres:
+    image: postgres:15-alpine
+    container_name: phoenix-db
+    environment:
+      POSTGRES_DB: phoenix_db
+      POSTGRES_USER: phoenix_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-phoenix_password_change_me}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U phoenix_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - phoenix-network
+
+  # Ollama LLM Service (Free, Local, $0 Forever)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: phoenix-ollama
+    ports:
+      - "11434:11434"
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - phoenix-network
+    # Pre-pull Mistral model on startup
+    entrypoint: /bin/sh
+    command: -c "ollama serve & sleep 5 && ollama pull mistral && wait"
+
+  # Project Phoenix Application
+  phoenix:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: phoenix-app
+    environment:
+      DATABASE_URL: postgresql://phoenix_user:${DB_PASSWORD:-phoenix_password_change_me}@postgres:5432/phoenix_db
+      OLLAMA_HOST: http://ollama:11434
+      ENVIRONMENT: production
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - phoenix-network
+    volumes:
+      - ./logs:/app/logs
+
+volumes:
+  postgres_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  phoenix-network:
+    driver: bridge

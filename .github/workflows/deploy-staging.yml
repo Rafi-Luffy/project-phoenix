@@ -1,0 +1,194 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'backend/**'
+      - 'Dockerfile.backend'
+      - 'helm/phoenix-api/**'
+      - '.github/workflows/deploy-staging.yml'
+  workflow_run:
+    workflows: ['Build & Push Docker Image to ECR']
+    types:
+      - completed
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: 'Docker image tag to deploy'
+        required: false
+        default: 'latest'
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: project-phoenix-staging
+  NAMESPACE: phoenix
+  HELM_CHART: ./helm/phoenix-api
+  HELM_VALUES_FILE: ./helm/phoenix-api/values/values-staging.yaml
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-staging
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.EKS_CLUSTER_NAME }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Add Helm repositories
+        run: |
+          helm repo add stable https://charts.helm.sh/stable
+          helm repo update
+
+      - name: Get image tag
+        id: image-tag
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            TAG=${{ github.event.inputs.image-tag }}
+          else
+            TAG=${{ github.sha }}
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "Image tag: ${TAG}"
+
+      - name: Get ECR repository URL
+        id: ecr-url
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          ECR_URL="${ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/phoenix-api"
+          echo "url=${ECR_URL}" >> $GITHUB_OUTPUT
+          echo "ECR URL: ${ECR_URL}"
+
+      - name: Validate Helm chart
+        run: |
+          helm lint ${{ env.HELM_CHART }}
+          helm template phoenix-api ${{ env.HELM_CHART }} \
+            -f ${{ env.HELM_VALUES_FILE }} \
+            --set image.tag=${{ steps.image-tag.outputs.tag }}
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install phoenix-api ${{ env.HELM_CHART }} \
+            -f ${{ env.HELM_VALUES_FILE }} \
+            -n ${{ env.NAMESPACE }} \
+            --create-namespace \
+            --set image.repository="${{ steps.ecr-url.outputs.url }}" \
+            --set image.tag="${{ steps.image-tag.outputs.tag }}" \
+            --set config.environment="staging" \
+            --wait \
+            --timeout 5m
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/phoenix-api -n ${{ env.NAMESPACE }} --timeout=5m
+          kubectl get pods -n ${{ env.NAMESPACE }}
+
+      - name: Wait for pods to be ready
+        run: |
+          kubectl wait --for=condition=Ready pod \
+            -l app.kubernetes.io/name=phoenix-api \
+            -n ${{ env.NAMESPACE }} \
+            --timeout=300s
+
+      - name: Get service endpoint
+        id: service-endpoint
+        run: |
+          SERVICE_IP=$(kubectl get svc -n ${{ env.NAMESPACE }} phoenix-api -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
+          if [ -z "$SERVICE_IP" ]; then
+            SERVICE_IP=$(kubectl get svc -n ${{ env.NAMESPACE }} phoenix-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "localhost")
+          fi
+          echo "endpoint=${SERVICE_IP}" >> $GITHUB_OUTPUT
+          echo "Service endpoint: ${SERVICE_IP}"
+
+      - name: Health check
+        run: |
+          SERVICE_ENDPOINT=${{ steps.service-endpoint.outputs.endpoint }}
+          echo "Checking health at: http://${SERVICE_ENDPOINT}:80/health"
+          
+          for i in {1..30}; do
+            if curl -f http://${SERVICE_ENDPOINT}:80/health 2>/dev/null | grep -q "ok"; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Attempt $i: Health check failed, retrying..."
+            sleep 2
+          done
+          
+          echo "Health check failed after 30 attempts"
+          exit 1
+        continue-on-error: true
+
+      - name: Run smoke tests
+        run: |
+          pip install requests
+          python -c "
+          import requests
+          import time
+          
+          endpoint = '${{ steps.service-endpoint.outputs.endpoint }}'
+          base_url = f'http://{endpoint}:80'
+          
+          # Test endpoints
+          tests = [
+              ('Health check', f'{base_url}/health'),
+              ('Readiness check', f'{base_url}/health/ready'),
+              ('API docs', f'{base_url}/docs'),
+          ]
+          
+          for test_name, url in tests:
+              try:
+                  response = requests.get(url, timeout=5)
+                  if response.status_code < 500:
+                      print(f'✓ {test_name}: {response.status_code}')
+                  else:
+                      print(f'✗ {test_name}: {response.status_code}')
+              except Exception as e:
+                  print(f'✗ {test_name}: {str(e)}')
+          "
+        continue-on-error: true
+
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Staging deployment ${{ job.status }}: ${{ github.repository }} on ${{ github.ref }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          fields: repo,message,commit,author
+        continue-on-error: true
+
+      - name: Post deployment summary
+        if: always()
+        run: |
+          echo "## Staging Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image Tag**: ${{ steps.image-tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cluster**: ${{ env.EKS_CLUSTER_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Namespace**: ${{ env.NAMESPACE }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service Endpoint**: ${{ steps.service-endpoint.outputs.endpoint }}" >> $GITHUB_STEP_SUMMARY

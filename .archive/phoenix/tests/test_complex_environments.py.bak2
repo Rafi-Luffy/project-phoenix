@@ -1,0 +1,1280 @@
+"""
+Complex Environment Testing for Phoenix
+Tests Phoenix in distributed systems, containers, cloud, and CI/CD environments
+"""
+import pytest
+import tempfile
+import shutil
+from pathlib import Path
+from uuid import uuid4
+from unittest.mock import Mock, patch, MagicMock
+import json
+import os
+
+from phoenix.core.models import FailureEvent, FailureType
+from phoenix.observer.test_runner import TestRunner
+from phoenix.observer.agentic_failure_detector import AgenticFailureDetector
+
+
+class TestDistributedSystemsScenarios:
+    """Test Phoenix in distributed systems environments"""
+    
+    def test_distributed_service_discovery_failure(self):
+        """Distributed: Service discovery failures"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "service_registry.py").write_text("""
+class ServiceRegistry:
+    def __init__(self):
+        self.services = {}
+    
+    def register(self, service_name, endpoint):
+        self.services[service_name] = endpoint
+    
+    def discover(self, service_name):
+        # Bug: no handling for missing services
+        return self.services[service_name]
+    
+    def health_check(self, service_name):
+        endpoint = self.discover(service_name)
+        # Simulate health check
+        return True
+""")
+            
+            (temp_dir / "test_service_discovery.py").write_text("""
+from service_registry import ServiceRegistry
+import pytest
+
+def test_discover_nonexistent_service():
+    registry = ServiceRegistry()
+    
+    # Should handle gracefully
+    with pytest.raises(KeyError):
+        registry.discover("nonexistent-service")
+
+def test_health_check_missing_service():
+    registry = ServiceRegistry()
+    
+    # Should return False or raise appropriate error
+    with pytest.raises(KeyError):
+        registry.health_check("missing-service")
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert result.total_tests >= 2
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_distributed_consensus_split_brain(self):
+        """Distributed: Split-brain in consensus algorithms"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "consensus.py").write_text("""
+class RaftNode:
+    def __init__(self, node_id, cluster_size):
+        self.node_id = node_id
+        self.cluster_size = cluster_size
+        self.current_term = 0
+        self.voted_for = None
+        self.is_leader = False
+    
+    def request_vote(self, term, candidate_id):
+        if term > self.current_term:
+            self.current_term = term
+            self.voted_for = candidate_id
+            return True
+        return False
+    
+    def become_leader(self, votes_received):
+        # Bug: doesn't check for majority
+        if votes_received > 0:
+            self.is_leader = True
+            return True
+        return False
+    
+    def check_quorum(self):
+        # Bug: can have split-brain with 50% votes
+        required_votes = self.cluster_size // 2
+        return required_votes
+""")
+            
+            (temp_dir / "test_consensus.py").write_text("""
+from consensus import RaftNode
+
+def test_leader_election_requires_majority():
+    node = RaftNode(node_id=1, cluster_size=5)
+    
+    # With 2 votes out of 5, should NOT become leader
+    result = node.become_leader(votes_received=2)
+    assert result == False, "Should require majority (3/5) not just 2 votes"
+
+def test_quorum_calculation():
+    node = RaftNode(node_id=1, cluster_size=5)
+    quorum = node.check_quorum()
+    
+    # Should require majority: ceil(5/2) + 1 = 3
+    assert quorum >= 3, f"Quorum should be 3 for 5 nodes, got {quorum}"
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to incorrect quorum calculation
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_distributed_data_replication_lag(self):
+        """Distributed: Replication lag and eventual consistency"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "replication.py").write_text("""
+import time
+
+class ReplicatedStore:
+    def __init__(self):
+        self.primary_data = {}
+        self.replica_data = {}
+        self.replication_lag = 0.1  # seconds
+    
+    def write(self, key, value):
+        self.primary_data[key] = value
+        # Async replication
+        return True
+    
+    def read_from_primary(self, key):
+        return self.primary_data.get(key)
+    
+    def read_from_replica(self, key):
+        # Bug: doesn't wait for replication
+        return self.replica_data.get(key)
+    
+    def sync_replicas(self):
+        # Simulate replication
+        time.sleep(self.replication_lag)
+        self.replica_data = self.primary_data.copy()
+""")
+            
+            (temp_dir / "test_replication.py").write_text("""
+from replication import ReplicatedStore
+import time
+
+def test_read_after_write_consistency():
+    store = ReplicatedStore()
+    
+    # Write to primary
+    store.write("key1", "value1")
+    
+    # Immediate read from replica should handle lag
+    result = store.read_from_replica("key1")
+    
+    # Should either return value or indicate not ready
+    assert result is not None or result is None, "Should handle replication lag"
+
+def test_eventual_consistency():
+    store = ReplicatedStore()
+    
+    store.write("key2", "value2")
+    
+    # After sync, should be consistent
+    store.sync_replicas()
+    
+    primary_val = store.read_from_primary("key2")
+    replica_val = store.read_from_replica("key2")
+    
+    assert primary_val == replica_val == "value2"
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.total_tests >= 2
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_distributed_message_queue_ordering(self):
+        """Distributed: Message queue ordering guarantees"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "message_queue.py").write_text("""
+from collections import deque
+import threading
+
+class DistributedQueue:
+    def __init__(self):
+        self.queue = deque()
+        self.lock = threading.Lock()
+    
+    def publish(self, message, partition_key=None):
+        # Bug: doesn't guarantee ordering for same partition
+        self.queue.append(message)
+    
+    def consume(self):
+        with self.lock:
+            if self.queue:
+                return self.queue.popleft()
+        return None
+    
+    def consume_batch(self, batch_size):
+        # Bug: no ordering guarantee in batch
+        batch = []
+        for _ in range(batch_size):
+            msg = self.consume()
+            if msg:
+                batch.append(msg)
+        return batch
+""")
+            
+            (temp_dir / "test_message_queue.py").write_text("""
+from message_queue import DistributedQueue
+
+def test_fifo_ordering():
+    queue = DistributedQueue()
+    
+    # Publish in order
+    queue.publish({"id": 1, "data": "first"})
+    queue.publish({"id": 2, "data": "second"})
+    queue.publish({"id": 3, "data": "third"})
+    
+    # Should consume in FIFO order
+    msg1 = queue.consume()
+    msg2 = queue.consume()
+    msg3 = queue.consume()
+    
+    assert msg1["id"] == 1
+    assert msg2["id"] == 2
+    assert msg3["id"] == 3
+
+def test_partition_ordering():
+    queue = DistributedQueue()
+    
+    # Messages with same partition key should maintain order
+    queue.publish({"seq": 1}, partition_key="user-123")
+    queue.publish({"seq": 2}, partition_key="user-123")
+    queue.publish({"seq": 3}, partition_key="user-123")
+    
+    batch = queue.consume_batch(3)
+    assert [msg["seq"] for msg in batch] == [1, 2, 3]
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.total_tests >= 2
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestContainerOrchestrationScenarios:
+    """Test Phoenix in container/Kubernetes environments"""
+    
+    def test_container_health_checks_startup_probes(self):
+        """Container: Health check and startup probe failures"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "health_check.py").write_text("""
+import time
+
+class ApplicationHealthCheck:
+    def __init__(self):
+        self.started = False
+        self.ready = False
+        self.startup_time = 5.0
+        self.start_time = time.time()
+    
+    def startup_probe(self):
+        # Bug: returns True before actually ready
+        return True
+    
+    def readiness_probe(self):
+        elapsed = time.time() - self.start_time
+        if elapsed < self.startup_time:
+            return False
+        return self.ready
+    
+    def liveness_probe(self):
+        # Bug: doesn't check actual application health
+        return True
+    
+    def mark_ready(self):
+        self.ready = True
+""")
+            
+            (temp_dir / "test_health.py").write_text("""
+from health_check import ApplicationHealthCheck
+import time
+
+def test_startup_probe_waits_for_initialization():
+    health = ApplicationHealthCheck()
+    
+    # Immediately after creation, should NOT be ready
+    assert health.startup_probe() == False or health.readiness_probe() == False
+
+def test_readiness_probe_after_startup():
+    health = ApplicationHealthCheck()
+    
+    # Should not be ready immediately
+    assert health.readiness_probe() == False
+    
+    # After marking ready
+    time.sleep(5.1)
+    health.mark_ready()
+    assert health.readiness_probe() == True
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to incorrect startup probe
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_container_resource_limits_oom(self):
+        """Container: Out of memory (OOM) handling"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "resource_manager.py").write_text("""
+import sys
+
+class MemoryManager:
+    def __init__(self, max_memory_mb=100):
+        self.max_memory = max_memory_mb * 1024 * 1024  # bytes
+        self.allocated = []
+    
+    def allocate(self, size_mb):
+        size_bytes = size_mb * 1024 * 1024
+        
+        # Bug: doesn't check memory limit before allocation
+        data = bytearray(size_bytes)
+        self.allocated.append(data)
+        return True
+    
+    def get_current_usage(self):
+        return sum(len(data) for data in self.allocated)
+    
+    def can_allocate(self, size_mb):
+        size_bytes = size_mb * 1024 * 1024
+        return self.get_current_usage() + size_bytes <= self.max_memory
+""")
+            
+            (temp_dir / "test_resource_limits.py").write_text("""
+from resource_manager import MemoryManager
+import pytest
+
+def test_memory_limit_enforcement():
+    manager = MemoryManager(max_memory_mb=100)
+    
+    # Allocate within limit
+    assert manager.allocate(50) == True
+    
+    # Try to exceed limit
+    with pytest.raises(MemoryError):
+        manager.allocate(60)  # Would exceed 100MB limit
+
+def test_check_before_allocate():
+    manager = MemoryManager(max_memory_mb=100)
+    
+    manager.allocate(80)
+    
+    # Should check capacity first
+    can_allocate = manager.can_allocate(30)
+    assert can_allocate == False
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to missing OOM check
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert "MemoryError" in failures[0].error_type or "Error" in failures[0].error_type
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_container_graceful_shutdown_sigterm(self):
+        """Container: Graceful shutdown on SIGTERM"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "app_lifecycle.py").write_text("""
+import signal
+import time
+
+class Application:
+    def __init__(self):
+        self.running = True
+        self.active_requests = []
+        self.shutdown_timeout = 30
+    
+    def handle_request(self, request_id):
+        self.active_requests.append(request_id)
+        time.sleep(0.1)
+        self.active_requests.remove(request_id)
+        return f"Processed {request_id}"
+    
+    def shutdown(self):
+        # Bug: doesn't wait for active requests to complete
+        self.running = False
+        return True
+    
+    def graceful_shutdown(self, timeout=30):
+        self.running = False
+        start = time.time()
+        
+        while self.active_requests:
+            if time.time() - start > timeout:
+                # Force shutdown
+                break
+            time.sleep(0.1)
+        
+        return len(self.active_requests) == 0
+""")
+            
+            (temp_dir / "test_lifecycle.py").write_text("""
+from app_lifecycle import Application
+import threading
+
+def test_graceful_shutdown_waits_for_requests():
+    app = Application()
+    
+    # Simulate active request
+    def slow_request():
+        app.handle_request("req-1")
+    
+    thread = threading.Thread(target=slow_request)
+    thread.start()
+    
+    time.sleep(0.05)  # Let request start
+    
+    # Shutdown should wait
+    result = app.graceful_shutdown(timeout=1)
+    thread.join()
+    
+    assert result == True
+    assert len(app.active_requests) == 0
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_container_volume_mount_permissions(self):
+        """Container: Volume mount permission issues"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "volume_manager.py").write_text("""
+import os
+from pathlib import Path
+
+class VolumeManager:
+    def __init__(self, mount_point="/data"):
+        self.mount_point = Path(mount_point)
+    
+    def write_file(self, filename, content):
+        filepath = self.mount_point / filename
+        
+        # Bug: doesn't check permissions before writing
+        with open(filepath, 'w') as f:
+            f.write(content)
+        return True
+    
+    def check_writable(self):
+        return os.access(self.mount_point, os.W_OK)
+    
+    def ensure_directory(self, dirname):
+        dirpath = self.mount_point / dirname
+        # Bug: doesn't handle permission errors
+        dirpath.mkdir(parents=True, exist_ok=True)
+        return True
+""")
+            
+            (temp_dir / "test_volumes.py").write_text("""
+from volume_manager import VolumeManager
+import tempfile
+import os
+import pytest
+
+def test_write_to_readonly_volume():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Make directory read-only
+        os.chmod(tmpdir, 0o444)
+        
+        manager = VolumeManager(mount_point=tmpdir)
+        
+        # Should check permissions first
+        assert manager.check_writable() == False
+        
+        # Should raise permission error
+        with pytest.raises(PermissionError):
+            manager.write_file("test.txt", "content")
+        
+        # Restore permissions for cleanup
+        os.chmod(tmpdir, 0o755)
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to permission handling
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert "PermissionError" in failures[0].error_type or "Error" in failures[0].error_type
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestCloudEnvironmentScenarios:
+    """Test Phoenix in cloud-native environments"""
+    
+    def test_cloud_auto_scaling_metrics(self):
+        """Cloud: Auto-scaling based on metrics"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "autoscaler.py").write_text("""
+class AutoScaler:
+    def __init__(self, min_instances=1, max_instances=10):
+        self.min_instances = min_instances
+        self.max_instances = max_instances
+        self.current_instances = min_instances
+    
+    def should_scale_up(self, cpu_percent, memory_percent):
+        # Bug: doesn't consider both metrics
+        if cpu_percent > 80:
+            return True
+        return False
+    
+    def should_scale_down(self, cpu_percent, memory_percent):
+        # Bug: can scale below minimum
+        if cpu_percent < 20:
+            return True
+        return False
+    
+    def scale_up(self):
+        if self.current_instances < self.max_instances:
+            self.current_instances += 1
+            return True
+        return False
+    
+    def scale_down(self):
+        # Bug: doesn't check minimum
+        self.current_instances -= 1
+        return True
+""")
+            
+            (temp_dir / "test_autoscaling.py").write_text("""
+from autoscaler import AutoScaler
+
+def test_scale_considers_all_metrics():
+    scaler = AutoScaler()
+    
+    # High CPU but low memory
+    assert scaler.should_scale_up(cpu_percent=85, memory_percent=30) == True
+    
+    # Low CPU but high memory - should still scale up
+    assert scaler.should_scale_up(cpu_percent=30, memory_percent=85) == True
+
+def test_cannot_scale_below_minimum():
+    scaler = AutoScaler(min_instances=2, max_instances=10)
+    scaler.current_instances = 2
+    
+    # Should not scale below min
+    result = scaler.scale_down()
+    assert scaler.current_instances >= 2
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to incomplete metric checking
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_cloud_secrets_management(self):
+        """Cloud: Secrets and credentials management"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "secrets.py").write_text("""
+import os
+import json
+
+class SecretsManager:
+    def __init__(self):
+        self.secrets = {}
+    
+    def load_from_env(self):
+        # Bug: logs secrets in plain text
+        for key, value in os.environ.items():
+            if key.startswith("SECRET_"):
+                print(f"Loaded secret: {key} = {value}")
+                self.secrets[key] = value
+    
+    def get_secret(self, key):
+        # Bug: returns None instead of raising error
+        return self.secrets.get(key)
+    
+    def rotate_secret(self, key, new_value):
+        # Bug: doesn't validate before rotation
+        old_value = self.secrets.get(key)
+        self.secrets[key] = new_value
+        return old_value
+""")
+            
+            (temp_dir / "test_secrets.py").write_text("""
+from secrets import SecretsManager
+import pytest
+
+def test_missing_secret_raises_error():
+    manager = SecretsManager()
+    
+    # Should raise error, not return None
+    with pytest.raises(KeyError):
+        manager.get_secret("NONEXISTENT_SECRET")
+
+def test_secret_rotation_validates():
+    manager = SecretsManager()
+    manager.secrets["DB_PASSWORD"] = "old_pass"
+    
+    # Should validate new secret format
+    with pytest.raises(ValueError):
+        manager.rotate_secret("DB_PASSWORD", "")  # Empty password invalid
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to missing validation
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_cloud_multi_region_failover(self):
+        """Cloud: Multi-region failover"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "multi_region.py").write_text("""
+class MultiRegionService:
+    def __init__(self):
+        self.regions = {
+            "us-east-1": {"healthy": True, "latency": 50},
+            "us-west-2": {"healthy": True, "latency": 80},
+            "eu-west-1": {"healthy": True, "latency": 120}
+        }
+        self.primary_region = "us-east-1"
+    
+    def get_active_region(self):
+        # Bug: doesn't check health before returning
+        return self.primary_region
+    
+    def failover(self):
+        # Bug: doesn't select based on health and latency
+        for region, info in self.regions.items():
+            if region != self.primary_region:
+                self.primary_region = region
+                return region
+        return None
+    
+    def mark_region_unhealthy(self, region):
+        if region in self.regions:
+            self.regions[region]["healthy"] = False
+""")
+            
+            (temp_dir / "test_multi_region.py").write_text("""
+from multi_region import MultiRegionService
+
+def test_failover_to_healthy_region():
+    service = MultiRegionService()
+    
+    # Mark primary as unhealthy
+    service.mark_region_unhealthy("us-east-1")
+    
+    # Should failover to healthy region
+    new_region = service.failover()
+    assert service.regions[new_region]["healthy"] == True
+
+def test_active_region_is_healthy():
+    service = MultiRegionService()
+    
+    service.mark_region_unhealthy("us-east-1")
+    
+    # Active region should be healthy
+    active = service.get_active_region()
+    assert service.regions[active]["healthy"] == True
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to no health checking
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_cloud_cost_optimization_spot_instances(self):
+        """Cloud: Spot instance interruption handling"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "spot_instance.py").write_text("""
+import time
+import random
+
+class SpotInstanceManager:
+    def __init__(self):
+        self.jobs = []
+        self.checkpointed_jobs = {}
+    
+    def run_job(self, job_id, duration):
+        # Simulate job execution
+        start_time = time.time()
+        
+        # Bug: doesn't handle interruption
+        while time.time() - start_time < duration:
+            time.sleep(0.1)
+        
+        return f"Job {job_id} completed"
+    
+    def checkpoint_job(self, job_id, progress):
+        self.checkpointed_jobs[job_id] = progress
+    
+    def resume_job(self, job_id):
+        # Bug: doesn't check if checkpoint exists
+        return self.checkpointed_jobs[job_id]
+    
+    def simulate_interruption(self):
+        # Spot instance interrupted
+        return "INTERRUPTED"
+""")
+            
+            (temp_dir / "test_spot_instances.py").write_text("""
+from spot_instance import SpotInstanceManager
+import pytest
+
+def test_job_checkpointing():
+    manager = SpotInstanceManager()
+    
+    # Start job
+    job_id = "job-123"
+    manager.checkpoint_job(job_id, progress=50)
+    
+    # Simulate interruption
+    manager.simulate_interruption()
+    
+    # Should be able to resume
+    progress = manager.resume_job(job_id)
+    assert progress == 50
+
+def test_resume_nonexistent_job():
+    manager = SpotInstanceManager()
+    
+    # Should handle missing checkpoint
+    with pytest.raises(KeyError):
+        manager.resume_job("nonexistent-job")
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to missing error handling
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestCICDPipelineScenarios:
+    """Test Phoenix in CI/CD pipeline environments"""
+    
+    def test_cicd_flaky_test_detection(self):
+        """CI/CD: Flaky test detection and retries"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "test_runner.py").write_text("""
+import random
+
+class CICDTestRunner:
+    def __init__(self):
+        self.test_results = {}
+        self.retry_count = 3
+    
+    def run_test(self, test_name):
+        # Simulate flaky test
+        result = random.choice([True, False])
+        return result
+    
+    def run_with_retry(self, test_name):
+        # Bug: doesn't track flakiness
+        for attempt in range(self.retry_count):
+            if self.run_test(test_name):
+                return True
+        return False
+    
+    def is_flaky(self, test_name):
+        # Bug: not implemented
+        return False
+""")
+            
+            (temp_dir / "test_flaky_detection.py").write_text("""
+from test_runner import CICDTestRunner
+
+def test_detect_flaky_tests():
+    runner = CICDTestRunner()
+    
+    # Run test multiple times
+    results = []
+    for _ in range(10):
+        results.append(runner.run_test("flaky_test"))
+    
+    # If results vary, it's flaky
+    if True in results and False in results:
+        assert runner.is_flaky("flaky_test") == True
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # May fail due to unimplemented flakiness detection
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_cicd_build_artifact_caching(self):
+        """CI/CD: Build artifact caching and invalidation"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "build_cache.py").write_text("""
+import hashlib
+import json
+
+class BuildCache:
+    def __init__(self):
+        self.cache = {}
+    
+    def compute_hash(self, files):
+        # Bug: doesn't handle file content, only names
+        content = "".join(sorted(files))
+        return hashlib.md5(content.encode()).hexdigest()
+    
+    def get_cached_artifact(self, files):
+        cache_key = self.compute_hash(files)
+        return self.cache.get(cache_key)
+    
+    def store_artifact(self, files, artifact):
+        cache_key = self.compute_hash(files)
+        self.cache[cache_key] = artifact
+    
+    def invalidate(self, pattern):
+        # Bug: doesn't actually invalidate matching entries
+        pass
+""")
+            
+            (temp_dir / "test_build_cache.py").write_text("""
+from build_cache import BuildCache
+
+def test_cache_invalidation_on_file_change():
+    cache = BuildCache()
+    
+    files_v1 = ["main.py", "utils.py"]
+    cache.store_artifact(files_v1, "artifact_v1")
+    
+    # File content changed (but name same)
+    files_v2 = ["main.py", "utils.py"]  # Same names
+    
+    # Should detect content change
+    cached = cache.get_cached_artifact(files_v2)
+    # This will incorrectly return artifact_v1
+    assert cached is None, "Should invalidate on content change"
+
+def test_pattern_based_invalidation():
+    cache = BuildCache()
+    
+    cache.store_artifact(["test1.py"], "artifact1")
+    cache.store_artifact(["test2.py"], "artifact2")
+    
+    cache.invalidate("test*.py")
+    
+    assert cache.get_cached_artifact(["test1.py"]) is None
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to hash only using filenames
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_cicd_deployment_rollback(self):
+        """CI/CD: Automated deployment rollback"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "deployment.py").write_text("""
+class DeploymentManager:
+    def __init__(self):
+        self.deployments = []
+        self.current_version = None
+    
+    def deploy(self, version, health_check_fn=None):
+        # Bug: doesn't validate before deploying
+        self.deployments.append(version)
+        self.current_version = version
+        return True
+    
+    def rollback(self):
+        if len(self.deployments) > 1:
+            # Bug: doesn't actually deploy previous version
+            self.deployments.pop()
+            return self.deployments[-1]
+        return None
+    
+    def health_check(self):
+        # Bug: always returns True
+        return True
+""")
+            
+            (temp_dir / "test_deployment.py").write_text("""
+from deployment import DeploymentManager
+
+def test_rollback_on_failed_health_check():
+    manager = DeploymentManager()
+    
+    # Deploy v1 (healthy)
+    manager.deploy("v1.0")
+    
+    # Deploy v2 (unhealthy)
+    manager.deploy("v2.0")
+    
+    # Simulate failed health check
+    if not manager.health_check():
+        previous = manager.rollback()
+        assert previous == "v1.0"
+    
+    # Current version should be v1.0
+    assert manager.current_version == "v1.0"
+
+def test_cannot_rollback_first_deployment():
+    manager = DeploymentManager()
+    
+    manager.deploy("v1.0")
+    
+    result = manager.rollback()
+    assert result is None
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Will fail due to incorrect rollback logic
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    def test_cicd_parallel_pipeline_stages(self):
+        """CI/CD: Parallel pipeline stage execution"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            (temp_dir / "pipeline.py").write_text("""
+import threading
+import time
+
+class Pipeline:
+    def __init__(self):
+        self.stages = {}
+        self.results = {}
+    
+    def add_stage(self, stage_name, dependencies=None):
+        self.stages[stage_name] = {
+            "dependencies": dependencies or [],
+            "completed": False
+        }
+    
+    def run_stage(self, stage_name):
+        # Bug: doesn't check dependencies completed
+        time.sleep(0.1)
+        self.stages[stage_name]["completed"] = True
+        self.results[stage_name] = "SUCCESS"
+    
+    def run_parallel(self):
+        # Bug: runs all stages in parallel without dependency check
+        threads = []
+        for stage_name in self.stages:
+            t = threading.Thread(target=self.run_stage, args=(stage_name,))
+            threads.append(t)
+            t.start()
+        
+        for t in threads:
+            t.join()
+""")
+            
+            (temp_dir / "test_pipeline.py").write_text("""
+from pipeline import Pipeline
+
+def test_dependency_order():
+    pipeline = Pipeline()
+    
+    pipeline.add_stage("build")
+    pipeline.add_stage("test", dependencies=["build"])
+    pipeline.add_stage("deploy", dependencies=["test"])
+    
+    pipeline.run_parallel()
+    
+    # Should respect dependencies
+    # This test will pass incorrectly due to bug
+    assert pipeline.stages["build"]["completed"] == True
+    assert pipeline.stages["test"]["completed"] == True
+    assert pipeline.stages["deploy"]["completed"] == True
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Test may pass but logic is wrong (no dependency checking)
+            assert result.total_tests >= 1
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class TestPhoenixInComplexEnvironments:
+    """Test Phoenix's self-healing in complex production environments"""
+    
+    def test_phoenix_heals_distributed_system_bug(self):
+        """Phoenix: Self-healing distributed consensus bug"""
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            # Create a complex distributed system with bug
+            (temp_dir / "distributed_lock.py").write_text("""
+import time
+import threading
+
+class DistributedLock:
+    def __init__(self, lease_duration=10):
+        self.lease_duration = lease_duration
+        self.locks = {}
+        self.lock = threading.Lock()
+    
+    def acquire(self, resource_id, client_id):
+        with self.lock:
+            if resource_id in self.locks:
+                # Bug: doesn't check lease expiration
+                return False
+            
+            self.locks[resource_id] = {
+                "client_id": client_id,
+                "acquired_at": time.time()
+            }
+            return True
+    
+    def release(self, resource_id, client_id):
+        with self.lock:
+            if resource_id in self.locks:
+                if self.locks[resource_id]["client_id"] == client_id:
+                    del self.locks[resource_id]
+                    return True
+        return False
+    
+    def is_locked(self, resource_id):
+        return resource_id in self.locks
+""")
+            
+            (temp_dir / "test_distributed_lock.py").write_text("""
+from distributed_lock import DistributedLock
+import time
+
+def test_lock_lease_expiration():
+    lock_manager = DistributedLock(lease_duration=1)
+    
+    # Client 1 acquires lock
+    assert lock_manager.acquire("resource-1", "client-1") == True
+    
+    # Wait for lease to expire
+    time.sleep(1.5)
+    
+    # Client 2 should be able to acquire expired lock
+    assert lock_manager.acquire("resource-1", "client-2") == True
+
+def test_lock_prevents_concurrent_access():
+    lock_manager = DistributedLock()
+    
+    assert lock_manager.acquire("resource-2", "client-1") == True
+    assert lock_manager.acquire("resource-2", "client-2") == False
+    
+    lock_manager.release("resource-2", "client-1")
+    assert lock_manager.acquire("resource-2", "client-2") == True
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Phoenix should detect the lease expiration bug
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            if len(failures) > 0:
+                # Phoenix detected the bug!
+                assert "lease" in failures[0].error_message.lower() or failures[0].failure_type == FailureType.TEST_FAILURE
+                
+                # In real Phoenix workflow:
+                # 1. Critic analyzes the failure
+                # 2. Programmer generates fix (check lease expiration)
+                # 3. Validator tests the fix
+                # 4. Integrator applies the fix
+                # 5. Knowledge stores the pattern
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
+    @patch('phoenix.core.config.get_config')
+    def test_phoenix_full_workflow_cloud_environment(self, mock_config):
+        """Phoenix: Complete self-healing in cloud environment"""
+        from phoenix.core.config import PhoenixConfig
+        config = PhoenixConfig(openai_api_key="test-key")
+        mock_config.return_value = config
+        
+        temp_dir = Path(tempfile.mkdtemp())
+        project_id = uuid4()
+        
+        try:
+            # Create cloud-native app with auto-scaling bug
+            (temp_dir / "cloud_app.py").write_text("""
+class CloudApplication:
+    def __init__(self):
+        self.instances = 1
+        self.max_instances = 5
+        self.min_instances = 1
+    
+    def scale(self, target_instances):
+        # Bug: can exceed max_instances
+        self.instances = target_instances
+        return self.instances
+    
+    def get_instance_count(self):
+        return self.instances
+""")
+            
+            (temp_dir / "test_cloud_app.py").write_text("""
+from cloud_app import CloudApplication
+
+def test_scale_respects_max_limit():
+    app = CloudApplication()
+    
+    # Try to scale beyond limit
+    result = app.scale(10)
+    
+    # Should cap at max_instances
+    assert app.get_instance_count() <= app.max_instances
+""")
+            
+            runner = TestRunner(temp_dir)
+            result = runner.run_tests()
+            
+            # Phoenix detects the failure
+            detector = FailureDetector(project_id, temp_dir)
+            failures = detector.detect_failures(result)
+            
+            assert len(failures) > 0
+            assert failures[0].failure_type == FailureType.TEST_FAILURE
+            
+            # Phoenix would then:
+            # 1. Critic: "scale() doesn't validate max_instances constraint"
+            # 2. Programmer: Add validation before assignment
+            # 3. Validator: Test the fix works
+            # 4. Integrator: Merge the fix
+            # 5. Knowledge: Store "always validate limits in scale operations"
+            
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
