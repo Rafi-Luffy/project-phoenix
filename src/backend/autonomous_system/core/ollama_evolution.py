@@ -90,7 +90,7 @@ class OllamaEvolutionManager:
         if success:
             self._learn_pattern(prompt, actual_response)
         
-        logger.info(f"✅ Recorded test: {test_name} - Success: {success}")
+        logger.info(f"Recorded test: {test_name} - Success: {success}")
     
     def _calculate_confidence(self, actual: str, expected: str) -> float:
         """Calculate confidence score based on response similarity"""
@@ -269,7 +269,7 @@ Please provide a response following the pattern of successful similar requests."
         with open(export_path, 'w') as f:
             json.dump(export_data, f, indent=2)
         
-        logger.info(f"✅ Learning data exported to {export_path}")
+        logger.info(f"Learning data exported to {export_path}")
         return export_path
     
     def create_fine_tuning_dataset(self) -> List[Dict[str, str]]:

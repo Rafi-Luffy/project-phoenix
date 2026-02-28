@@ -40,10 +40,10 @@ class PostgresDatabase:
                 1, 20,  # min_connections, max_connections
                 self.database_url
             )
-            self.logger.info("✅ PostgreSQL connection pool created")
+            self.logger.info(" PostgreSQL connection pool created")
             return True
         except Exception as e:
-            self.logger.error(f"❌ Failed to create connection pool: {e}")
+            self.logger.error(f" Failed to create connection pool: {e}")
             return False
     
     async def migrate(self) -> bool:
@@ -63,7 +63,7 @@ class PostgresDatabase:
             if not cur.fetchone()[0]:
                 self.logger.info("Running database migrations...")
                 # Tables will be created by init-db.sql
-                self.logger.info("✅ Database schema verified")
+                self.logger.info(" Database schema verified")
             
             cur.close()
             self.pool.putconn(conn)
@@ -262,6 +262,6 @@ class PostgresDatabase:
         try:
             if self.pool:
                 self.pool.closeall()
-                self.logger.info("✅ PostgreSQL connection pool closed")
+                self.logger.info(" PostgreSQL connection pool closed")
         except Exception as e:
             self.logger.error(f"Error closing pool: {e}")

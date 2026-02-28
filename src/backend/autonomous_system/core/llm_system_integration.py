@@ -55,7 +55,7 @@ class LLMSystemIntegrator:
         self.request_count = 0
         self.error_count = 0
         
-        logger.info("🤖 LLM System Integrator initialized")
+        logger.info("LLM System Integrator initialized")
 
     async def initialize(self) -> bool:
         """
@@ -63,7 +63,7 @@ class LLMSystemIntegrator:
         Gracefully handles if Ollama not available
         """
         try:
-            logger.info("🚀 Initializing LLM integration with project...")
+            logger.info("Initializing LLM integration with project...")
             self.init_time = datetime.now()
             
             # Try to connect to Ollama
@@ -74,10 +74,10 @@ class LLMSystemIntegrator:
                 # Verify model availability
                 model_info = OllamaConfig.get_model_info(self.llm_model)
                 logger.info(
-                    f"✅ LLM Ready: {model_info['name']} "
+                    f"LLM Ready: {model_info['name']} "
                     f"({model_info['size']}) - {model_info['description']}"
                 )
-                logger.info("💰 Cost: $0 (Ollama local, zero API charges)")
+                logger.info("Cost: $0 (Ollama local, zero API charges)")
                 
                 # Track initialization in metrics
                 if hasattr(self.orchestrator, 'metrics_collector'):
@@ -90,15 +90,15 @@ class LLMSystemIntegrator:
                 self.llm_enabled = False
                 self.llm_health = "unavailable"
                 logger.warning(
-                    "⚠️  Ollama not available - running in rule-based mode"
+                    "Ollama not available - running in rule-based mode"
                 )
                 logger.info(
-                    "💡 To enable LLM reasoning, install Ollama: https://ollama.ai"
+                    "To enable LLM reasoning, install Ollama: https://ollama.ai"
                 )
                 return True  # Still operational without LLM
                 
         except Exception as e:
-            logger.error(f"❌ LLM initialization error: {e}")
+            logger.error(f"LLM initialization error: {e}")
             self.llm_enabled = False
             self.llm_health = "error"
             self.error_count += 1
@@ -136,7 +136,7 @@ class LLMSystemIntegrator:
             
             # Check if we have cached reasoning
             if cache_key in self.reasoning_cache:
-                logger.debug("📦 Using cached reasoning analysis")
+                logger.debug(" Using cached reasoning analysis")
                 return self.reasoning_cache[cache_key]
             
             # Prepare context for LLM
@@ -154,7 +154,7 @@ class LLMSystemIntegrator:
             max_variations = int(os.getenv("PHOENIX_MAX_VARIATIONS", "4"))
             max_variations = max(0, min(6, max_variations))
 
-            logger.info(f"🧠 Analyzing with self-evolving LLM engine: {error.error_type}")
+            logger.info(f" Analyzing with self-evolving LLM engine: {error.error_type}")
             best_result: Optional[Dict[str, Any]] = None
             best_confidence: float = 0.0
             best_prompt_id: str = ""
@@ -269,11 +269,11 @@ class LLMSystemIntegrator:
                     "llm_error_analysis_success", 1
                 )
             
-            logger.info(f"✅ LLM analysis complete for {error.error_type}")
+            logger.info(f" LLM analysis complete for {error.error_type}")
             return enriched_result
             
         except Exception as e:
-            logger.error(f"❌ LLM analysis error: {e}")
+            logger.error(f" LLM analysis error: {e}")
             self.error_count += 1
             
             if hasattr(self.orchestrator, 'metrics_collector'):
@@ -322,11 +322,11 @@ class LLMSystemIntegrator:
                 str(correction_result) if correction_result else "No result"
             )
             
-            logger.debug(f"📝 Generated explanation: {explanation[:100]}...")
+            logger.debug(f" Generated explanation: {explanation[:100]}...")
             return explanation
             
         except Exception as e:
-            logger.error(f"❌ Explanation generation error: {e}")
+            logger.error(f" Explanation generation error: {e}")
             return f"Strategy {selected_strategy} applied"
 
     async def detect_error_patterns(
@@ -354,7 +354,7 @@ class LLMSystemIntegrator:
             )
             
             logger.info(
-                f"🔍 Detected {pattern_analysis.get('error_count', 0)} "
+                f" Detected {pattern_analysis.get('error_count', 0)} "
                 f"error patterns"
             )
             
@@ -366,7 +366,7 @@ class LLMSystemIntegrator:
             return pattern_analysis
             
         except Exception as e:
-            logger.error(f"❌ Pattern detection error: {e}")
+            logger.error(f" Pattern detection error: {e}")
             return {"patterns_found": 0, "patterns": []}
 
     async def recommend_optimizations(
@@ -396,13 +396,13 @@ class LLMSystemIntegrator:
             recs = recommendations.get("recommendations", "")
             if isinstance(recs, str) and recs:
                 rec_list = [r.strip() for r in recs.split("\n") if r.strip()]
-                logger.info(f"💡 Generated {len(rec_list)} optimization suggestions")
+                logger.info(f" Generated {len(rec_list)} optimization suggestions")
                 return rec_list
             
             return []
             
         except Exception as e:
-            logger.error(f"❌ Optimization recommendation error: {e}")
+            logger.error(f" Optimization recommendation error: {e}")
             return []
 
     async def get_health_status(self) -> Dict[str, Any]:
@@ -436,7 +436,7 @@ class LLMSystemIntegrator:
         """Shutdown LLM integration"""
         try:
             await self.llm_client.close()
-            logger.info("🛑 LLM integration shutdown complete")
+            logger.info(" LLM integration shutdown complete")
         except Exception as e:
             logger.error(f"Error during LLM shutdown: {e}")
 

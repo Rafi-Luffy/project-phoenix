@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Bot, 
@@ -13,7 +13,9 @@ import {
   RefreshCw,
   ChevronRight,
   Brain,
-  GitBranch
+  GitBranch,
+  Plus,
+  Trash2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +35,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 interface Agent {
@@ -47,36 +64,46 @@ interface Agent {
   corrections: number;
 }
 
-const agents: Agent[] = [
-  { id: "1", name: "Monitor-01", role: "Monitor", status: "active", lastError: "API timeout", lastCorrection: "2m ago", version: "v2.4.1", uptime: "14d 3h", corrections: 234 },
-  { id: "2", name: "Monitor-02", role: "Monitor", status: "active", lastError: "Memory leak", lastCorrection: "12m ago", version: "v2.4.1", uptime: "14d 3h", corrections: 189 },
-  { id: "3", name: "Critic-01", role: "Critic", status: "idle", lastError: "-", lastCorrection: "1h ago", version: "v2.3.8", uptime: "7d 12h", corrections: 156 },
-  { id: "4", name: "Critic-02", role: "Critic", status: "active", lastError: "Rate limit", lastCorrection: "8m ago", version: "v2.4.0", uptime: "3d 5h", corrections: 98 },
-  { id: "5", name: "Executor-01", role: "Executor", status: "active", lastError: "Loop detected", lastCorrection: "25m ago", version: "v2.4.1", uptime: "14d 3h", corrections: 312 },
-  { id: "6", name: "Executor-02", role: "Executor", status: "error", lastError: "Config mismatch", lastCorrection: "45m ago", version: "v2.4.0", uptime: "1d 8h", corrections: 45 },
-  { id: "7", name: "Executor-03", role: "Executor", status: "active", lastError: "Null pointer", lastCorrection: "5m ago", version: "v2.4.1", uptime: "10d 2h", corrections: 278 },
-  { id: "8", name: "Planner-01", role: "Planner", status: "active", lastError: "-", lastCorrection: "15m ago", version: "v2.4.1", uptime: "14d 3h", corrections: 445 },
-  { id: "9", name: "Planner-02", role: "Planner", status: "idle", lastError: "-", lastCorrection: "2h ago", version: "v2.3.9", uptime: "5d 18h", corrections: 203 },
-];
-
-const traceSteps = [
-  { step: "Detection", time: "0ms", status: "complete", details: "Anomaly detected in response latency" },
-  { step: "Analysis", time: "120ms", status: "complete", details: "Root cause: Database connection pool exhausted" },
-  { step: "Planning", time: "340ms", status: "complete", details: "Strategy: Increase pool size, add connection timeout" },
-  { step: "Execution", time: "890ms", status: "complete", details: "Applied configuration changes to db-config.yaml" },
-  { step: "Validation", time: "1.2s", status: "complete", details: "Response latency normalized, no regression detected" },
-];
-
-const memorySummary = [
-  { concept: "API Timeouts", count: 45, severity: "high" },
-  { concept: "Memory Leaks", count: 23, severity: "medium" },
-  { concept: "Rate Limiting", count: 67, severity: "low" },
-  { concept: "Auth Failures", count: 12, severity: "high" },
-  { concept: "Data Validation", count: 89, severity: "low" },
-];
+const STORAGE_KEY = 'phoenix_agents';
 
 export const Agents = () => {
+  const [agents, setAgents] = useState<Agent[]>(() => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]'); }
+    catch { return []; }
+  });
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newRole, setNewRole] = useState<Agent['role']>('Monitor');
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(agents));
+  }, [agents]);
+
+  const addAgent = () => {
+    if (!newName.trim()) return;
+    const agent: Agent = {
+      id: crypto.randomUUID(),
+      name: newName.trim(),
+      role: newRole,
+      status: 'idle',
+      lastError: '—',
+      lastCorrection: '—',
+      version: 'v1.0.0',
+      uptime: '0m',
+      corrections: 0,
+    };
+    setAgents(prev => [...prev, agent]);
+    setNewName('');
+    setNewRole('Monitor');
+    setDialogOpen(false);
+  };
+
+  const deleteAgent = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAgents(prev => prev.filter(a => a.id !== id));
+    setSelectedAgent(prev => prev?.id === id ? null : prev);
+  };
 
   const getRoleColor = (role: Agent["role"]) => {
     switch (role) {
@@ -105,19 +132,19 @@ export const Agents = () => {
             <h1 className="text-2xl font-bold">Agents</h1>
             <p className="text-muted-foreground">Manage and monitor your runtime agents</p>
           </div>
-          <Button variant="hero" size="sm">
-            <Bot className="h-4 w-4 mr-2" />
-            Deploy New Agent
+          <Button variant="hero" size="sm" onClick={() => setDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Agent
           </Button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Total Agents", value: "9", icon: Bot },
-            { label: "Active", value: "6", icon: Activity },
-            { label: "Corrections Today", value: "147", icon: CheckCircle2 },
-            { label: "Avg Response", value: "1.2s", icon: Clock },
+            { label: "Total Agents", value: agents.length.toString(), icon: Bot },
+            { label: "Active", value: agents.filter(a => a.status === "active").length.toString(), icon: Activity },
+            { label: "Corrections Today", value: "0", icon: CheckCircle2 },
+            { label: "Avg Response", value: "—", icon: Clock },
           ].map((stat, i) => (
             <Card key={i} className="bg-card border-border">
               <CardContent className="p-4 flex items-center gap-4">
@@ -136,6 +163,19 @@ export const Agents = () => {
         {/* Agents Table */}
         <Card className="bg-card border-border">
           <CardContent className="p-0">
+            {agents.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <Bot className="h-12 w-12 text-muted-foreground/20 mb-4" />
+                <p className="text-lg font-medium mb-1">No agents deployed yet</p>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Deploy your first agent to start monitoring and self-healing automatically.
+                </p>
+                <Button variant="hero" size="sm" onClick={() => setDialogOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add First Agent
+                </Button>
+              </div>
+            ) : (
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-border">
@@ -195,6 +235,12 @@ export const Agents = () => {
                           <DropdownMenuItem>
                             <RefreshCw className="h-4 w-4 mr-2" /> Restart
                           </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={(e) => deleteAgent(agent.id, e)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" /> Remove
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -202,6 +248,7 @@ export const Agents = () => {
                 ))}
               </TableBody>
             </Table>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -258,26 +305,9 @@ export const Agents = () => {
                       <Brain className="h-4 w-4 text-primary" />
                       <h3 className="font-semibold">Memory Summary</h3>
                     </div>
-                    <div className="space-y-2">
-                      {memorySummary.map((item) => (
-                        <div key={item.concept} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
-                          <span className="text-sm">{item.concept}</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">{item.count}</span>
-                            <Badge 
-                              variant="outline" 
-                              className={cn(
-                                "text-xs",
-                                item.severity === "high" && "text-red-400 border-red-400/30",
-                                item.severity === "medium" && "text-amber-400 border-amber-400/30",
-                                item.severity === "low" && "text-green-400 border-green-400/30"
-                              )}
-                            >
-                              {item.severity}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="flex flex-col items-center justify-center py-6 text-muted-foreground text-xs border border-dashed border-border rounded-lg">
+                      <Brain className="h-5 w-5 mb-1 opacity-20" />
+                      No memory data yet for this agent
                     </div>
                   </div>
 
@@ -287,26 +317,9 @@ export const Agents = () => {
                       <GitBranch className="h-4 w-4 text-primary" />
                       <h3 className="font-semibold">Recent ToT Trace</h3>
                     </div>
-                    <div className="space-y-2">
-                      {traceSteps.map((step, i) => (
-                        <div key={step.step} className="relative">
-                          {i < traceSteps.length - 1 && (
-                            <div className="absolute left-[11px] top-6 h-full w-0.5 bg-border" />
-                          )}
-                          <div className="flex gap-3">
-                            <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 z-10">
-                              <CheckCircle2 className="h-3 w-3 text-primary" />
-                            </div>
-                            <div className="flex-1 pb-4">
-                              <div className="flex items-center justify-between">
-                                <span className="font-medium text-sm">{step.step}</span>
-                                <span className="text-xs text-muted-foreground">{step.time}</span>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-1">{step.details}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="flex flex-col items-center justify-center py-6 text-muted-foreground text-xs border border-dashed border-border rounded-lg">
+                      <GitBranch className="h-5 w-5 mb-1 opacity-20" />
+                      No trace data yet for this agent
                     </div>
                   </div>
                 </CardContent>
@@ -315,6 +328,53 @@ export const Agents = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Add Agent Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="bg-card border-border sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-primary" />
+              Add Agent
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="agent-name">Agent Name</Label>
+              <Input
+                id="agent-name"
+                placeholder="e.g. Planner-Alpha"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addAgent()}
+                className="bg-background border-border"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Role</Label>
+              <Select value={newRole} onValueChange={(v) => setNewRole(v as Agent['role'])}>
+                <SelectTrigger className="bg-background border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="Planner">Planner</SelectItem>
+                  <SelectItem value="Critic">Critic</SelectItem>
+                  <SelectItem value="Executor">Executor</SelectItem>
+                  <SelectItem value="Monitor">Monitor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button className="flex-1" variant="hero" onClick={addAgent} disabled={!newName.trim()}>
+                <Plus className="h-4 w-4 mr-2" /> Add Agent
+              </Button>
+              <Button variant="outline" className="border-border" onClick={() => setDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

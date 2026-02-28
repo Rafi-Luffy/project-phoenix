@@ -45,7 +45,7 @@ async def lifespan(app: FastAPI):
         raise RuntimeError("System initialization failed")
     
     # Initialize LLM integration (graceful degradation if unavailable)
-    logger.info("🤖 Initializing LLM integration layer...")
+    logger.info("Initializing LLM integration layer...")
     initialize_llm_integration(orchestrator)
     await initialize_all_llm()
     

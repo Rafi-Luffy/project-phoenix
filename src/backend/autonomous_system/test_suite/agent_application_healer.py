@@ -174,30 +174,30 @@ self.learning_history.append(experience)
         
         Returns True if healing successful
         """
-        print(f"\n🔧 HEALING APPLICATION: {test_name}")
+        print(f"\n HEALING APPLICATION: {test_name}")
         print(f"   Error: {error}")
         
         # Step 1: Diagnose
         failure = self.diagnose_test_failure(test_name, error)
         self.failures_diagnosed.append(failure)
         
-        print(f"   📍 Diagnosed: {failure.error_type}")
-        print(f"   🔍 Component: {failure.affected_component}")
-        print(f"   📋 Contract: {failure.expected_contract}")
+        print(f"   Diagnosed: {failure.error_type}")
+        print(f"   Component: {failure.affected_component}")
+        print(f"   Contract: {failure.expected_contract}")
         
         # Step 2: Generate fix
         fix = self.generate_fix(failure)
         if not fix:
-            print(f"   ❌ Could not generate fix")
+            print(f"   Could not generate fix")
             return False
         
         self.fixes_generated.append(fix)
         
-        print(f"   ✅ Generated fix for {fix.component_name}")
-        print(f"   💡 Reason: {fix.fix_reason}")
+        print(f"   Generated fix for {fix.component_name}")
+        print(f"   Reason: {fix.fix_reason}")
         
         # Step 3: Apply fix (in real system, this would modify the component)
-        print(f"   📝 Implementation:\n{fix.implementation_code}")
+        print(f"   Implementation:\n{fix.implementation_code}")
         
         return True
     

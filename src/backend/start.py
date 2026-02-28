@@ -15,10 +15,10 @@ import uvicorn
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("🚀 Starting Autonomous Self-Healing System Backend")
+    print("Starting Autonomous Self-Healing System Backend")
     print("=" * 70)
-    print(f"📁 Working directory: {backend_dir}")
-    print(f"🐍 Python path includes: {backend_dir}")
+    print(f"Working directory: {backend_dir}")
+    print(f"Python path: {backend_dir}")
     print("=" * 70)
     
     uvicorn.run(

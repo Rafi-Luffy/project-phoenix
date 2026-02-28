@@ -79,11 +79,11 @@ class AsyncDatabaseManager:
             async with self.engine.begin() as conn:
                 await conn.execute("SELECT 1")
             
-            logger.info("✅ PostgreSQL connection successful")
+            logger.info(" PostgreSQL connection successful")
             return True
             
         except Exception as e:
-            logger.error(f"❌ Failed to initialize database: {e}")
+            logger.error(f" Failed to initialize database: {e}")
             raise
     
     async def close(self):

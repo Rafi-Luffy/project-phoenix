@@ -205,18 +205,18 @@ def print_system_health_report():
     
     report = get_system_health()
     
-    print(f"\n📊 Overview:")
+    print(f"\n Overview:")
     print(f"   Total Registered Systems: {report['registered_systems']}")
     print(f"   Total Healing Actions: {report['total_healings']}")
     
-    print(f"\n🖥️  Systems:")
+    print(f"\n  Systems:")
     for system_name, info in report['systems'].items():
         print(f"\n   {system_name}")
         print(f"      Type: {info['type']}")
         print(f"      Healings Performed: {info['healings_performed']}")
         print(f"      Registered: {info['registered_at']}")
     
-    print(f"\n📝 Recent Healing Actions:")
+    print(f"\n Recent Healing Actions:")
     for healing in report['healings']:
         print(f"\n   {healing['system']} - {healing['agent']}")
         print(f"      Diagnosis: {healing['diagnosis']}")
@@ -259,15 +259,15 @@ NO HUMAN INTERVENTION NEEDED!
     print_system_health_report()
     
     print("\n" + "#"*80)
-    print("# ✅ AUTONOMOUS SELF-HEALING COMPLETE")
+    print("#  AUTONOMOUS SELF-HEALING COMPLETE")
     print("#"*80)
     print("""
 The system has demonstrated autonomous healing for:
-✓ Test applications
-✓ Production agents
-✓ Distributed systems
-✓ Microservices
-✓ Batch processors
+ Test applications
+ Production agents
+ Distributed systems
+ Microservices
+ Batch processors
 
 This is the future of autonomous systems - they heal themselves!
     """)

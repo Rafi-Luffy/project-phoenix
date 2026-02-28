@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useUser, useClerk, UserButton } from "@clerk/clerk-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
+import {
   LayoutDashboard, 
   Bot, 
   Network, 
@@ -14,7 +14,7 @@ import {
   GitBranch,
   BarChart3,
   Hammer,
-  Command
+  Command,
 } from "lucide-react";
 import { PhoenixLogo } from "@/components/landing/PhoenixLogo";
 import { Button } from "@/components/ui/button";
@@ -26,14 +26,14 @@ import { CommandPalette, useKeyboardShortcuts } from "./CommandPalette";
 import { OnboardingWizard } from "./OnboardingWizard";
 
 const navItems = [
-  { label: "Dashboard", href: "/console", icon: LayoutDashboard },
-  { label: "Agents", href: "/console/agents", icon: Bot },
-  { label: "Agent Builder", href: "/console/builder", icon: Hammer },
-  { label: "Pipelines", href: "/console/pipelines", icon: GitBranch },
-  { label: "Memory Graph", href: "/console/memory", icon: Network },
-  { label: "Experiments", href: "/console/experiments", icon: FlaskConical },
-  { label: "Metrics", href: "/console/metrics", icon: BarChart3 },
-  { label: "Settings", href: "/console/settings", icon: Settings },
+  { label: "Dashboard",     href: "/console",             icon: LayoutDashboard },
+  { label: "Agents",        href: "/console/agents",       icon: Bot },
+  { label: "Agent Builder", href: "/console/builder",      icon: Hammer },
+  { label: "Pipelines",     href: "/console/pipelines",    icon: GitBranch },
+  { label: "Memory Graph",  href: "/console/memory",       icon: Network },
+  { label: "Experiments",   href: "/console/experiments",  icon: FlaskConical },
+  { label: "Metrics",       href: "/console/metrics",      icon: BarChart3 },
+  { label: "Settings",      href: "/console/settings",     icon: Settings },
 ];
 
 export const ConsoleLayout = () => {

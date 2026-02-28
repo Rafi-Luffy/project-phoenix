@@ -113,7 +113,7 @@ class OllamaClient:
             ) as resp:
                 if resp.status == 200:
                     self.available = True
-                    self.logger.info(f"✅ Ollama connected at {self.host}")
+                    self.logger.info(f" Ollama connected at {self.host}")
                     
                     # List available models
                     models = await resp.json()
@@ -121,7 +121,7 @@ class OllamaClient:
                     return True
                     
         except Exception as e:
-            self.logger.warning(f"⚠️ Ollama not available: {e}")
+            self.logger.warning(f" Ollama not available: {e}")
             self.available = False
             return False
     
@@ -136,17 +136,17 @@ class OllamaClient:
             await self.initialize()
         
         try:
-            self.logger.info(f"📥 Downloading {self.model} model...")
+            self.logger.info(f" Downloading {self.model} model...")
             async with self.session.post(
                 f"{self.host}/api/pull",
                 json={"name": self.model},
                 timeout=aiohttp.ClientTimeout(total=600)  # 10 min timeout
             ) as resp:
                 if resp.status == 200:
-                    self.logger.info(f"✅ Model {self.model} ready")
+                    self.logger.info(f" Model {self.model} ready")
                     return True
         except Exception as e:
-            self.logger.error(f"❌ Failed to pull model: {e}")
+            self.logger.error(f" Failed to pull model: {e}")
         
         return False
     
@@ -211,14 +211,14 @@ class OllamaClient:
                 if resp.status == 200:
                     data = await resp.json()
                     response = data.get("response", "").strip()
-                    self.logger.info(f"✅ Generated reasoning ({len(response)} chars)")
+                    self.logger.info(f" Generated reasoning ({len(response)} chars)")
                     return response
                     
         except asyncio.TimeoutError:
-            self.logger.error("⏱️ LLM request timeout")
+            self.logger.error("⏱ LLM request timeout")
             return "[Reasoning generation timed out]"
         except Exception as e:
-            self.logger.error(f"❌ LLM error: {e}")
+            self.logger.error(f" LLM error: {e}")
             return "[Error generating reasoning]"
     
     async def analyze_error(

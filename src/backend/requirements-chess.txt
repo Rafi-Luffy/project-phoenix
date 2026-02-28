@@ -1,0 +1,20 @@
+# ============================================================
+# PROJECT PHOENIX — Chess Demo Backend
+# Minimal dependencies for local dev & presentation
+# Install: pip install -r requirements-chess.txt
+# Run:     python chess_app.py
+# ============================================================
+
+# Core web framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+
+# WebSocket support (already included in uvicorn[standard])
+websockets==12.0
+
+# Chess engine
+python-chess>=1.9
+
+# CORS
+starlette==0.35.0

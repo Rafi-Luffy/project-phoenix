@@ -34,9 +34,9 @@ class AutonomousTestRunner:
         Run Phase 6 tests and capture failures for healing
         """
         print("\n" + "="*80)
-        print("🚀 AUTONOMOUS TEST RUNNER - PHASE 6")
+        print("AUTONOMOUS TEST RUNNER - PHASE 6")
         print("="*80)
-        print("\n📋 Running test suite (represents agent applications)...")
+        print("\nRunning test suite (represents agent applications)...")
         print("   When tests fail = Agent applications need healing\n")
         
         # Run pytest and capture output
@@ -58,16 +58,16 @@ class AutonomousTestRunner:
         failures = self._parse_test_failures(output_lines)
         
         print(f"\n{'='*80}")
-        print(f"📊 TEST RESULTS")
+        print(f"TEST RESULTS")
         print(f"{'='*80}")
         
         # Count results
         passed = result.stdout.count(" PASSED")
         failed = result.stdout.count(" FAILED")
         
-        print(f"\n✅ Passed: {passed}")
-        print(f"❌ Failed: {failed}")
-        print(f"📈 Total:  {passed + failed}")
+        print(f"\nPassed: {passed}")
+        print(f"Failed: {failed}")
+        print(f"Total:  {passed + failed}")
         
         return {
             "passed": passed,
@@ -98,14 +98,14 @@ class AutonomousTestRunner:
         Diagnose and generate fixes for failing test applications
         """
         print(f"\n{'='*80}")
-        print(f"🔧 AUTONOMOUS APPLICATION HEALING")
+        print(f"AUTONOMOUS APPLICATION HEALING")
         print(f"{'='*80}")
         
         if test_results["failed"] == 0:
-            print("\n✅ All applications healthy! No healing needed.")
+            print("\nAll applications healthy! No healing needed.")
             return {"status": "all_healthy", "healed": 0}
         
-        print(f"\n🔍 Analyzing {test_results['failed']} failing applications...\n")
+        print(f"\nAnalyzing {test_results['failed']} failing applications...\n")
         
         # Common failures based on test analysis
         healing_examples = [
@@ -132,7 +132,7 @@ class AutonomousTestRunner:
         # Show healing process
         healed_count = 0
         for example in healing_examples:
-            print(f"\n🎯 HEALING: {example['test']}")
+            print(f"\nHEALING: {example['test']}")
             print(f"   Component: {example['component']}")
             print(f"   Issue: {example['issue']}")
             print(f"   Contract: {example['contract']}")
@@ -149,9 +149,9 @@ class AutonomousTestRunner:
             
             fix = self.healer.generate_fix(failure)
             if fix:
-                print(f"\n   ✅ FIX GENERATED:")
-                print(f"   📝 What to add: {fix.required_implementation}")
-                print(f"   💡 Why: {fix.fix_reason}")
+                print(f"\n   FIX GENERATED:")
+                print(f"   What to add: {fix.required_implementation}")
+                print(f"   Why: {fix.fix_reason}")
                 healed_count += 1
         
         return {
@@ -185,15 +185,15 @@ class AutonomousTestRunner:
                            healing_results: Dict[str, Any]):
         """Print final autonomous healing report"""
         print(f"\n{'='*80}")
-        print(f"📋 AUTONOMOUS HEALING SUMMARY")
+        print(f"AUTONOMOUS HEALING SUMMARY")
         print(f"{'='*80}")
         
-        print(f"\n1️⃣  FAILURES DETECTED: {test_results['failed']}")
-        print(f"2️⃣  APPLICATIONS ANALYZED: {len(test_results['failures'])}")
-        print(f"3️⃣  FIXES GENERATED: {healing_results.get('healed', 0)}")
+        print(f"\nFAILURES DETECTED: {test_results['failed']}")
+        print(f"APPLICATIONS ANALYZED: {len(test_results['failures'])}")
+        print(f"FIXES GENERATED: {healing_results.get('healed', 0)}")
         
         print(f"\n{'='*80}")
-        print(f"🎯 KEY INSIGHT")
+        print(f"KEY INSIGHT")
         print(f"{'='*80}")
         print("""
 The system has identified what needs to be fixed in your test applications.

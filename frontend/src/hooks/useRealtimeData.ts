@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
-// Types for real-time data
+// ─── Types ────────────────────────────────────────────────────────────────────
 export interface AgentActivity {
   id: string;
   agentName: string;
@@ -27,180 +27,91 @@ export interface LiveMetrics {
   cpuUsage: number;
 }
 
-// Simulated real-time data generator
-const generateAgentActivity = (): AgentActivity => {
-  const agents = ["Monitor-01", "Monitor-02", "Executor-01", "Executor-02", "Critic-01", "Critic-02"];
-  const actions: AgentActivity["action"][] = ["detected", "analyzed", "patched", "validated"];
-  const titles = [
-    "API timeout in payment-service",
-    "Null pointer exception in user-auth",
-    "Rate limit exceeded in external-api",
-    "Memory leak in cache-service",
-    "Database connection pool exhausted",
-    "Infinite loop in recommendation-engine",
-    "SSL certificate expiring soon",
-    "High latency in search-service",
-    "Disk space warning on node-3",
-    "Failed health check on worker-5",
-  ];
-  const severities: AgentActivity["severity"][] = ["low", "medium", "high", "critical"];
+// ─── Hooks ────────────────────────────────────────────────────────────────────
 
-  return {
-    id: `activity-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    agentName: agents[Math.floor(Math.random() * agents.length)],
-    action: actions[Math.floor(Math.random() * actions.length)],
-    title: titles[Math.floor(Math.random() * titles.length)],
-    timestamp: new Date(),
-    severity: severities[Math.floor(Math.random() * severities.length)],
-  };
-};
-
-const generateIncident = (): IncidentStream => {
-  const types = ["Error", "Warning", "Critical", "Info"];
-  const messages = [
-    "Service degradation detected",
-    "Unusual traffic pattern identified",
-    "Auto-scaling triggered",
-    "Failover initiated",
-    "Cache invalidated",
-    "Configuration drift detected",
-  ];
-  const statuses: IncidentStream["status"][] = ["open", "investigating", "resolved"];
-
-  return {
-    id: `incident-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    type: types[Math.floor(Math.random() * types.length)],
-    message: messages[Math.floor(Math.random() * messages.length)],
-    timestamp: new Date(),
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-  };
-};
-
-// Hook for simulated real-time agent activity
+/**
+ * Real-time agent activity feed.
+ * Starts empty — data is populated when agents are connected and emit events.
+ */
 export const useRealtimeAgentActivity = (maxItems: number = 10) => {
   const [activities, setActivities] = useState<AgentActivity[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected] = useState(false);
 
-  useEffect(() => {
-    // Simulate connection
-    const connectTimeout = setTimeout(() => setIsConnected(true), 500);
-
-    // Generate initial activities
-    const initialActivities = Array.from({ length: 5 }, generateAgentActivity);
-    setActivities(initialActivities);
-
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      if (Math.random() > 0.3) { // 70% chance of new activity
-        setActivities((prev) => {
-          const newActivity = generateAgentActivity();
-          const updated = [newActivity, ...prev];
-          return updated.slice(0, maxItems);
-        });
-      }
-    }, 3000); // New activity every 3 seconds
-
-    return () => {
-      clearTimeout(connectTimeout);
-      clearInterval(interval);
-    };
+  const addActivity = useCallback((activity: AgentActivity) => {
+    setActivities((prev) => [activity, ...prev].slice(0, maxItems));
   }, [maxItems]);
 
-  return { activities, isConnected };
+  return { activities, isConnected, addActivity };
 };
 
-// Hook for simulated real-time incident stream
+/**
+ * Real-time incident stream.
+ * Starts empty — incidents appear only when real agents report them.
+ */
 export const useRealtimeIncidents = (maxItems: number = 5) => {
   const [incidents, setIncidents] = useState<IncidentStream[]>([]);
 
-  useEffect(() => {
-    // Generate initial incidents
-    const initialIncidents = Array.from({ length: 3 }, generateIncident);
-    setIncidents(initialIncidents);
-
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      if (Math.random() > 0.5) { // 50% chance of new incident
-        setIncidents((prev) => {
-          const newIncident = generateIncident();
-          const updated = [newIncident, ...prev];
-          return updated.slice(0, maxItems);
-        });
-      }
-    }, 5000); // New incident every 5 seconds
-
-    return () => clearInterval(interval);
-  }, [maxItems]);
-
   const resolveIncident = useCallback((id: string) => {
     setIncidents((prev) =>
-      prev.map((incident) =>
-        incident.id === id ? { ...incident, status: "resolved" as const } : incident
+      prev.map((inc) =>
+        inc.id === id ? { ...inc, status: "resolved" as const } : inc
       )
     );
   }, []);
 
-  return { incidents, resolveIncident };
+  const addIncident = useCallback((incident: IncidentStream) => {
+    setIncidents((prev) => [incident, ...prev].slice(0, maxItems));
+  }, [maxItems]);
+
+  return { incidents, resolveIncident, addIncident };
 };
 
-// Hook for simulated live metrics
+/**
+ * Live system metrics.
+ * All start at 0 for new users — real values come from connected agents.
+ */
 export const useLiveMetrics = () => {
   const [metrics, setMetrics] = useState<LiveMetrics>({
-    activeAgents: 24,
-    incidentsToday: 147,
-    successRate: 98.5,
-    avgResponseTime: 1.2,
-    memoryUsage: 67,
-    cpuUsage: 45,
+    activeAgents: 0,
+    incidentsToday: 0,
+    successRate: 0,
+    avgResponseTime: 0,
+    memoryUsage: 0,
+    cpuUsage: 0,
   });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMetrics((prev) => ({
-        activeAgents: prev.activeAgents + (Math.random() > 0.8 ? (Math.random() > 0.5 ? 1 : -1) : 0),
-        incidentsToday: prev.incidentsToday + (Math.random() > 0.5 ? 1 : 0),
-        successRate: Math.min(100, Math.max(95, prev.successRate + (Math.random() - 0.5) * 0.5)),
-        avgResponseTime: Math.max(0.5, prev.avgResponseTime + (Math.random() - 0.5) * 0.2),
-        memoryUsage: Math.min(95, Math.max(30, prev.memoryUsage + (Math.random() - 0.5) * 5)),
-        cpuUsage: Math.min(90, Math.max(20, prev.cpuUsage + (Math.random() - 0.5) * 8)),
-      }));
-    }, 2000);
-
-    return () => clearInterval(interval);
+  const updateMetrics = useCallback((patch: Partial<LiveMetrics>) => {
+    setMetrics((prev) => ({ ...prev, ...patch }));
   }, []);
 
-  return metrics;
+  return { ...metrics, updateMetrics };
 };
 
-// Hook for chart data that updates in real-time
+/**
+ * Real-time chart data for incidents vs time.
+ * Starts with empty timeline — fills as real events arrive.
+ */
 export const useRealtimeChartData = () => {
-  const [chartData, setChartData] = useState([
-    { time: "00:00", incidents: 3, resolved: 3 },
-    { time: "04:00", incidents: 5, resolved: 5 },
-    { time: "08:00", incidents: 12, resolved: 11 },
-    { time: "12:00", incidents: 8, resolved: 8 },
-    { time: "16:00", incidents: 15, resolved: 14 },
-    { time: "20:00", incidents: 7, resolved: 7 },
-    { time: "Now", incidents: 4, resolved: 3 },
-  ]);
+  const now = new Date();
+  const hours = Array.from({ length: 7 }, (_, i) => {
+    const h = new Date(now.getTime() - (6 - i) * 4 * 3600 * 1000);
+    return `${h.getHours().toString().padStart(2, "0")}:00`;
+  });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setChartData((prev) => {
-        const updated = [...prev];
-        const lastItem = { ...updated[updated.length - 1] };
-        
-        // Randomly update the "Now" data point
-        lastItem.incidents = Math.max(1, lastItem.incidents + Math.floor((Math.random() - 0.4) * 3));
-        lastItem.resolved = Math.min(lastItem.incidents, lastItem.resolved + (Math.random() > 0.3 ? 1 : 0));
-        
-        updated[updated.length - 1] = lastItem;
-        return updated;
-      });
-    }, 4000);
+  const [chartData, setChartData] = useState(
+    hours.map((h, i) => ({ time: i === 6 ? "Now" : h, incidents: 0, resolved: 0 }))
+  );
 
-    return () => clearInterval(interval);
+  const recordIncident = useCallback((resolved: boolean) => {
+    setChartData((prev) => {
+      const updated = [...prev];
+      const last = { ...updated[updated.length - 1] };
+      last.incidents += 1;
+      if (resolved) last.resolved += 1;
+      updated[updated.length - 1] = last;
+      return updated;
+    });
   }, []);
 
-  return chartData;
+  return { chartData, recordIncident };
 };

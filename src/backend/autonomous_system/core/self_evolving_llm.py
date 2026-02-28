@@ -100,7 +100,7 @@ class SelfEvolvingLLMEngine:
         
         self._init_prompts()
         
-        logger.info(f"✅ Self-Evolving LLM Engine initialized")
+        logger.info(f" Self-Evolving LLM Engine initialized")
         logger.info(f"   Model: {self.model}")
         logger.info(f"   Ollama URL: {self.ollama_url}")
     
@@ -480,7 +480,7 @@ Respond in JSON format with: performance_improvements, reliability_improvements,
         with open(filepath, 'w') as f:
             json.dump(data, f, indent=2, default=str)
         
-        logger.info(f"✅ Learning data saved to {filepath}")
+        logger.info(f" Learning data saved to {filepath}")
     
     def load_learning(self, filepath: str = "llm_learning.json"):
         """Load saved learning data"""
@@ -496,7 +496,7 @@ Respond in JSON format with: performance_improvements, reliability_improvements,
             self.learning_history = data.get("learning_history", [])
             self.performance_stats = data.get("performance_stats", self.performance_stats)
             
-            logger.info(f"✅ Learning data loaded from {filepath}")
+            logger.info(f" Learning data loaded from {filepath}")
         except FileNotFoundError:
             logger.info(f"No previous learning data found at {filepath}")
 

@@ -113,7 +113,7 @@ class UniversalAgentHealer:
         }
         self.active_healings[system_name] = []
         
-        print(f"✅ Registered {system_type.value} system: {system_name}")
+        print(f" Registered {system_type.value} system: {system_name}")
     
     def monitor_system(self, system_name: str) -> bool:
         """
@@ -130,7 +130,7 @@ class UniversalAgentHealer:
             return is_healthy
         except Exception as e:
             # System failed - trigger healing
-            print(f"\n⚠️  System {system_name} failed: {e}")
+            print(f"\n  System {system_name} failed: {e}")
             return False
     
     def diagnose_system_failure(self, system_name: str, 
@@ -282,12 +282,12 @@ def health(self) -> float:
         In production: Would actually modify the agent component
         For now: Validates the fix and reports what needs to be applied
         """
-        print(f"\n🔧 APPLYING HEALING: {healing.system_name}")
+        print(f"\n APPLYING HEALING: {healing.system_name}")
         print(f"   Agent: {healing.failing_agent}")
         print(f"   Diagnosis: {healing.diagnosis}")
         print(f"   Fix Type: {healing.fix_type}")
-        print(f"   📝 Code to apply:\n{healing.implementation}")
-        print(f"   ✓ Validation: {healing.validation_method}")
+        print(f"    Code to apply:\n{healing.implementation}")
+        print(f"    Validation: {healing.validation_method}")
         
         healing.status = "applied"
         return True
@@ -304,24 +304,24 @@ def health(self) -> float:
         4. Validate recovery
         """
         print(f"\n{'='*80}")
-        print(f"🏥 UNIVERSAL AGENT HEALER - AUTO-HEALING SYSTEM")
+        print(f" UNIVERSAL AGENT HEALER - AUTO-HEALING SYSTEM")
         print(f"{'='*80}")
-        print(f"\n🎯 System: {system_name} ({system_type.value})")
+        print(f"\n System: {system_name} ({system_type.value})")
         
         # Step 1: Diagnose
-        print(f"\n1️⃣  DIAGNOSING...")
+        print(f"\n1⃣  DIAGNOSING...")
         failure = self.diagnose_system_failure(system_name, system_type, error)
-        print(f"   ✓ Failure Type: {failure.error_type.value}")
-        print(f"   ✓ Failing Agent: {failure.failing_agent}")
-        print(f"   ✓ Components Involved: {failure.context['components_involved']}")
+        print(f"    Failure Type: {failure.error_type.value}")
+        print(f"    Failing Agent: {failure.failing_agent}")
+        print(f"    Components Involved: {failure.context['components_involved']}")
         
         # Step 2: Generate healing plan
-        print(f"\n2️⃣  GENERATING HEALING PLAN...")
+        print(f"\n2⃣  GENERATING HEALING PLAN...")
         healings = self.generate_healing_plan(failure)
-        print(f"   ✓ Generated {len(healings)} healing actions")
+        print(f"    Generated {len(healings)} healing actions")
         
         # Step 3: Apply healings
-        print(f"\n3️⃣  APPLYING FIXES...")
+        print(f"\n3⃣  APPLYING FIXES...")
         for healing in healings:
             success = self.apply_healing(healing)
             self.healing_history.append(healing)
@@ -329,10 +329,10 @@ def health(self) -> float:
                 self.active_healings[system_name].append(healing)
         
         # Step 4: Validate
-        print(f"\n4️⃣  VALIDATING RECOVERY...")
-        print(f"   ✓ Validation methods: {[h.validation_method for h in healings]}")
+        print(f"\n4⃣  VALIDATING RECOVERY...")
+        print(f"    Validation methods: {[h.validation_method for h in healings]}")
         
-        print(f"\n✅ HEALING COMPLETE")
+        print(f"\n HEALING COMPLETE")
         print(f"   Healed System: {system_name}")
         print(f"   Actions Applied: {len(healings)}")
         

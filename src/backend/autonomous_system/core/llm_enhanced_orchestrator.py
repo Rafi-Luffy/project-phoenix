@@ -39,19 +39,19 @@ class LLMEnhancedOrchestrator(SelfCorrectionOrchestrator):
         
     async def initialize(self) -> bool:
         """Initialize LLM client"""
-        logger.info("🤖 Initializing free LLM reasoning...")
+        logger.info(" Initializing free LLM reasoning...")
         
         try:
             # Try to connect to Ollama
             if await self.llm_client.initialize():
                 self.llm_enabled = True
-                logger.info("✅ Ollama LLM ready (FREE - no API costs!)")
+                logger.info(" Ollama LLM ready (FREE - no API costs!)")
                 
                 # Pull model if needed
                 await self.llm_client.pull_model()
                 return True
             else:
-                logger.warning("⚠️ Ollama not available, running without LLM reasoning")
+                logger.warning(" Ollama not available, running without LLM reasoning")
                 self.llm_enabled = False
                 return True  # Still works without LLM
                 
@@ -85,7 +85,7 @@ class LLMEnhancedOrchestrator(SelfCorrectionOrchestrator):
                 error_type, error_message, context
             )
             
-            logger.info(f"🧠 LLM analysis: {error_type}")
+            logger.info(f" LLM analysis: {error_type}")
             return analysis
             
         except Exception as e:
@@ -164,7 +164,7 @@ Which strategy should we use? Explain why."""
             # Cache result
             self.reasoning_cache[cache_key] = result
             
-            logger.info(f"🧠 Strategy selected: {selected}")
+            logger.info(f" Strategy selected: {selected}")
             return result
             
         except Exception as e:
@@ -197,7 +197,7 @@ Which strategy should we use? Explain why."""
                 error, strategy_selected, outcome
             )
             
-            logger.info("📝 Correction explanation generated")
+            logger.info(" Correction explanation generated")
             return explanation
             
         except Exception as e:
@@ -223,7 +223,7 @@ Which strategy should we use? Explain why."""
         try:
             pattern = await self.llm_client.identify_pattern(recent_errors)
             
-            logger.info("🔍 Error pattern identified")
+            logger.info(" Error pattern identified")
             return {
                 "pattern_found": True,
                 "pattern_description": pattern.get("pattern_analysis", ""),
@@ -262,7 +262,7 @@ Which strategy should we use? Explain why."""
                 system_metrics
             )
             
-            logger.info("💡 Optimization recommendations generated")
+            logger.info(" Optimization recommendations generated")
             return [{
                 "recommendation": recommendations.get("recommendations", ""),
                 "category": "general",

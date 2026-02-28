@@ -301,10 +301,10 @@ class PostgreSQLDatabase:
                 port=self.port
             )
             self.connection.autocommit = True
-            print(f"✅ Connected to PostgreSQL database: {self.dbname}")
+            print(f" Connected to PostgreSQL database: {self.dbname}")
             return True
         except Exception as e:
-            print(f"❌ Failed to connect to database: {e}")
+            print(f" Failed to connect to database: {e}")
             raise
 
     async def disconnect(self) -> bool:
@@ -313,7 +313,7 @@ class PostgreSQLDatabase:
             self.close()
             return True
         except Exception as e:
-            print(f"❌ Failed to disconnect from database: {e}")
+            print(f" Failed to disconnect from database: {e}")
             return False
 
     async def health_check(self) -> Dict[str, Any]:
@@ -369,7 +369,7 @@ class PostgreSQLDatabase:
             );
         ''')
         
-        print("✅ Database migrations completed")
+        print(" Database migrations completed")
     
     def store_memory(self, content: Dict[str, Any], memory_type: str, agent_id: str = None, tags: List[str] = None) -> str:
         """Store memory entry"""
@@ -452,4 +452,4 @@ class PostgreSQLDatabase:
         """Close database connection"""
         if self.connection:
             self.connection.close()
-            print("✅ Database connection closed")
+            print(" Database connection closed")

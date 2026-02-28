@@ -9,6 +9,7 @@ dist/
 build/
 .eggs/
 .venv/
+.venv_phoenix_demo/
 venv/
 env/
 ENV/
@@ -27,6 +28,8 @@ ENV/
 frontend/node_modules/
 frontend/dist/
 frontend/.cache/
+chess_game/node_modules/
+chess_game/dist/
 node_modules/
 
 # ── Coverage & Test Reports ──────────────────────────────
@@ -36,6 +39,7 @@ coverage.xml
 *.cover
 .pytest_cache/
 .tox/
+tests.log
 
 # ── Database / Data files ────────────────────────────────
 *.sqlite
@@ -55,9 +59,39 @@ logs/
 *.swp
 *.swo
 Thumbs.db
+*.png
+*.jpg
+*.jpeg
 
 # ── Ollama learning data (large, generated) ──────────────
 ollama_learning_data/
+
+# ── Old / Archived / Irrelevant ──────────────────────────
+.archive/
+extra/
+monitoring/
+infrastructure/
+# Old test scripts (pre-refactor)
+comprehensive_test_ollama_learning.py
+ollama_fast_evolution_test.py
+run_full_tests_with_ollama_learning.py
+show_final_status.py
+deploy_complete_system.py
+demo.sh
+# Old generated/status files
+FINAL_VERIFICATION_SUMMARY.txt
+SYSTEM_STATUS_DASHBOARD.txt
+OLLAMA_FULL_TEST_EVOLUTION_REPORT.md
+API_ALIGNMENT_IMPLEMENTATION_COMPLETE.md
+API_DOCUMENTATION_INDEX.md
+API_QUICK_REFERENCE.md
+all_explanation.md
+.task11_manifest.txt
+.structure
+# Old root-level backend entry points (replaced by src/backend/)
+main.py
+config.py
+pytest.ini
 
 # ── Monitoring / Generated ───────────────────────────────
 monitoring/
@@ -66,3 +100,6 @@ infrastructure/
 # ── Build artifacts ──────────────────────────────────────
 *.pyc
 dist/
+
+# ── Extra docs (not pushed) ─────────────────────────────
+extra/
